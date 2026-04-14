@@ -150,6 +150,27 @@
 - Escalate clearly when blocked
 - Stop early if uncertain instead of guessing
 
+## Git
+
+### Commits
+- Use conventional commits: `type: short description` (lowercase, no period)
+- Types: `feat` `fix` `chore` `refactor` `docs` `test` `style`
+- Scope optional: `feat(cart): add discount logic`
+- Subject line max 72 chars
+- No body unless the why is non-obvious
+
+### Pull requests
+- Title: same format as commit — `type: description`
+- Body: bullet points of what changed, one line each
+- No prose, no "this PR does X" framing
+- Reference issue if one exists: `Closes #123`
+- Max 3–5 bullets — if more, PR is too big
+
+### Branches
+- `feat/short-slug`
+- `fix/short-slug`
+- `chore/short-slug`
+
 ## Communication style
 - Be terse, direct, and technical
 - Remove all filler language
