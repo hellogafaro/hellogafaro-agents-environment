@@ -1,74 +1,46 @@
-# hello-gafaro-dev-template
+# Hello Gafaro Cursor environment
 
-Minimal project operating system for cross-agent and cross-harness work.
+Minimal shared bootstrap for Hello Gafaro Cursor Cloud environments.
 
-## Purpose
+## What it installs
 
-This repository is a lightweight template for running projects with durable, file-based context instead of hidden session state.
+`install.sh` performs the environment-wide setup:
 
-It keeps the operating model intentionally small:
-- `AGENTS.md` defines how agents should work
-- `CLAUDE.md` points to `AGENTS.md`
-- `TODO.md` is the single shared task ledger
-- `docs/` stores durable project documentation
-- `docs/templates/` provides starter templates for specs, plans, architecture, and reviews
+- installs a pinned RTK release in `~/.local/bin`
+- initializes RTK's global Cursor integration
+- installs the curated shared skills from
+  `hellogafaro/hellogafaro-skills` at Cursor user scope
 
-## Structure
+The shared skill set is intentionally small:
 
-```text
-.
-├─ AGENTS.md
-├─ CLAUDE.md -> AGENTS.md
-├─ README.md
-├─ TODO.md
-└─ docs/
-   ├─ architecture/
-   ├─ plans/
-   ├─ reviews/
-   ├─ specs/
-   └─ templates/
-      ├─ architecture-template.md
-      ├─ plan-template.md
-      ├─ review-template.md
-      └─ spec-template.md
-```
+- `brainstorm`
+- `deep-research`
+- `documentation-creation`
+- `git-operations`
+- `handoff`
+- `skills-management`
+- `summarize`
 
-## Workflow
+Project- or customer-specific skills belong in each repository, not here.
 
-### 1. Put project rules in `AGENTS.md`
-Use `AGENTS.md` as the root policy file for agents and automation.
+## Cursor setup
 
-### 2. Track work in `TODO.md`
-Use `TODO.md` as the single shared task list across agents.
+Use the contents of `install.sh` as the install script for the saved Cursor
+Cloud environment. Cursor runs it when creating a Build, so it must remain
+idempotent.
 
-### 3. Keep durable docs in `docs/`
-- `docs/specs/` for what should be built
-- `docs/plans/` for how it will be built
-- `docs/architecture/` for system structure and constraints
-- `docs/reviews/` for optional review artifacts on non-trivial work
+The environment needs:
 
-### 4. Start from templates
-Use the files in `docs/templates/` to create new durable artifacts with consistent structure.
+- Linux
+- `curl`
+- GitHub CLI 2.95 or newer
+- GitHub access to the private `hellogafaro/hellogafaro-skills` repository
 
-## Principles
+No secrets belong in this repository. Configure them in Cursor or in the
+project's deployment platform only when the agent actually needs them.
 
-- Less is more
-- Files over chat history
-- Minimal diffs
-- KAIZEN over big rewrites
-- YAGNI over speculative structure
-- One shared task ledger
-- Cross-agent handoff through repository artifacts
+## Updating
 
-## Suggested usage
-
-1. Customize `AGENTS.md` for the project
-2. Add the current priorities to `TODO.md`
-3. Create a spec in `docs/specs/` when work is ambiguous or non-trivial
-4. Create a plan in `docs/plans/` for multi-step execution
-5. Add architecture notes in `docs/architecture/` when needed
-6. Write a review in `docs/reviews/` only when the work warrants it
-
-## Notes
-
-This template is designed to stay small. Add new folders or process only when repeated work proves the need.
+Change the pinned RTK version or shared skill list in `install.sh`, validate it,
+and let Cursor create a new Build. Add tooling only after repeated work proves
+it belongs in every project.
