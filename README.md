@@ -25,9 +25,15 @@ Project- or customer-specific skills belong in each repository, not here.
 
 ## Cursor setup
 
-Use the contents of `install.sh` as the install script for the saved Cursor
-Cloud environment. Cursor runs it when creating a Build, so it must remain
-idempotent.
+Use this command as the install script for the saved Cursor Cloud environment:
+
+```bash
+gh api repos/hellogafaro/hellogafaro-cursor-environment/contents/install.sh \
+  --jq .content | base64 --decode | bash
+```
+
+Cursor runs it when creating a Build, so it must remain idempotent. The command
+requires authenticated GitHub access because this repository is private.
 
 The environment needs:
 
@@ -38,6 +44,17 @@ The environment needs:
 
 No secrets belong in this repository. Configure them in Cursor or in the
 project's deployment platform only when the agent actually needs them.
+
+## Agent instructions
+
+`AGENTS.md` is the canonical shared instruction text and includes the Ponytail
+principles. Cursor treats `AGENTS.md` as repository-scoped. To apply these
+principles to every project, copy the shared section into a Cursor Team Rule or
+User Rule once; Cursor does not currently document an API for automating that
+dashboard setting.
+
+Project repositories can add their own short `AGENTS.md` for stack-specific
+commands and constraints.
 
 ## Updating
 
