@@ -101,11 +101,9 @@ No other secrets belong in this repository.
 
 ## Agent instructions
 
-`AGENTS.md` is the canonical shared instruction text. Copy the Ponytail section
-into a Cursor Team Rule or User Rule if you want it on every project.
-
-Each product repository should add a short `AGENTS.md` with stack-specific
-commands and a `## Cursor Cloud specific instructions` section.
+`AGENTS.md` is the canonical shared agent instruction set. Copy it into a Cursor
+Team Rule to apply across all projects, or add a short repo-specific section in
+each product repository for stack commands.
 
 ## Updating
 
