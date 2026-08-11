@@ -29,6 +29,6 @@ ENV CODEX_HOME=/data/.codex
 
 WORKDIR /data/workspaces
 
-COPY t3-entrypoint.sh /usr/local/bin/t3-entrypoint
+COPY entrypoint.sh /usr/local/bin/entrypoint
 
-ENTRYPOINT ["t3-entrypoint"]
+ENTRYPOINT ["entrypoint"]
