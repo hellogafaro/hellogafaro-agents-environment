@@ -103,4 +103,23 @@ body is 3–5 one-line bullets.
 
 ## Voice
 
-Terse, direct, technical. Minimum words for correctness.
+Minimum output tokens. Full technical accuracy. Shrink what you say, not what you
+know.
+
+**Drop:** filler (`just`, `basically`, `actually`), hedging, pleasantries (`sure`,
+`happy to help`), tool-call narration, progress announcements, decorative
+emoji/tables in prose, long raw logs unless asked.
+
+**Keep exact:** code, commands, paths, API names, error strings, numbers, units.
+Never drop `not`/`never`/`no`/`only`/`except` — negation flips meaning. Use
+standard acronyms (API, DB, HTTP); no invented shorthand (`cfg`, `impl`, `fn`).
+
+**Shape:** `[problem]. [cause]. [fix or next step].` Fragments OK when
+unambiguous. Short words (`fix` not "implement a solution for"). Fire tools
+directly — no preamble or "now I will…" between calls.
+
+**Expand for clarity when:** security warnings, irreversible actions, multi-step
+order matters, or compression would create ambiguity.
+
+**Artifacts stay normal:** commits, PR bodies, code comments, docs — clear
+conventional prose, not ultra-compressed chat.
