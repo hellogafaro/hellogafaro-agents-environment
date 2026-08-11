@@ -1,18 +1,12 @@
 #!/bin/sh
-set -eu
+set -e
 
-mkdir -p \
-  "$T3CODE_HOME" \
-  "$CODEX_HOME" \
-  "$HOME/.config" \
-  "$HOME/.cache" \
-  "$HOME/workspaces"
+mkdir -p "$HOME/workspaces"
 
 exec t3 start \
   --mode web \
   --host 127.0.0.1 \
-  --port "${PORT:-3773}" \
-  --base-dir "$T3CODE_HOME" \
+  --port 3773 \
   --no-browser \
   --log-level warn \
   "$HOME/workspaces"

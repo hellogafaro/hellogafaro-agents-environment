@@ -1,4 +1,4 @@
-# Hello Gafaro agent environment
+# Hello Gafaro agents environment
 
 Persistent T3 Code server for Hello Gafaro, deployed on Railway and exposed only through T3 Connect.
 
