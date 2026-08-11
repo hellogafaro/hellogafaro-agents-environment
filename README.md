@@ -1,10 +1,58 @@
-# Hello Gafaro Cursor environment
+# Hello Gafaro agent environment
 
-Shared bootstrap for the single Hello Gafaro Cursor Cloud development
-environment. All product repositories are cloned into one multi-repo workspace;
-this repository owns the shared tooling and install script.
+Shared bootstrap for Hello Gafaro coding-agent environments. This repository
+owns the common tooling, Infisical convention, Cursor Cloud setup, and the
+persistent T3 Code server deployed on Railway.
 
-## What it installs
+## Runtimes
+
+- Cursor Cloud uses `.cursor/environment.json` and `install.sh`.
+- Railway builds the root `Dockerfile` and runs T3 Code through T3 Connect.
+
+## T3 Code on Railway
+
+The Railway service has no public or custom domain. T3 Connect creates an
+authenticated outbound managed tunnel instead.
+
+Attach one persistent volume at `/data`. It stores:
+
+- `/data/.t3` — T3 Code and T3 Connect state
+- `/data/.codex` — Codex authentication and configuration
+- `/data/workspaces` — checked-out repositories
+
+Set these Railway service variables:
+
+| Name | Value |
+| --- | --- |
+| `HOME` | `/data` |
+| `T3CODE_HOME` | `/data/.t3` |
+| `CODEX_HOME` | `/data/.codex` |
+| `INFISICAL_DOMAIN` | `https://secrets.ongafaro.com` |
+| `INFISICAL_API_URL` | `https://secrets.ongafaro.com` |
+| `INFISICAL_CLIENT_ID` | machine identity client ID |
+| `INFISICAL_CLIENT_SECRET` | machine identity client secret |
+
+Add the client ID and secret directly in Railway; never commit them. Complete
+the one-time authorization inside the deployed service:
+
+```bash
+t3 connect login --headless
+t3 connect link
+codex login
+```
+
+Use short-lived Infisical access tokens when working in a repository:
+
+```bash
+export INFISICAL_TOKEN="$(infisical login \
+  --method=universal-auth \
+  --client-id="$INFISICAL_CLIENT_ID" \
+  --client-secret="$INFISICAL_CLIENT_SECRET" \
+  --silent \
+  --plain)"
+```
+
+## Cursor Cloud tooling
 
 `install.sh` runs on every Build and must stay idempotent:
 
