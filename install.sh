@@ -119,9 +119,12 @@ install_python() {
     python3 python3-pip python3-venv
 }
 
-install_t3() {
+install_agent_clis() {
   require_command npm
-  npm install --global --silent --prefix "${HOME}/.local" t3@latest
+  npm install --global --silent --prefix "${HOME}/.local" \
+    t3@latest \
+    @openai/codex@latest \
+    @anthropic-ai/claude-code@latest
 }
 
 replace_symlink() {
@@ -239,7 +242,7 @@ install_environment() {
   install_infisical
   install_bun
   install_python
-  install_t3
+  install_agent_clis
   install_agent_instructions
   install_rtk
   install_environment_skills

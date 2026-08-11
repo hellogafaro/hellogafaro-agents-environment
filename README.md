@@ -14,6 +14,8 @@ bash install.sh install
 The installer is idempotent and installs or updates:
 
 - T3 Code
+- Codex CLI
+- Claude Code CLI
 - Node.js with npm
 - Bun
 - Python with pip and `venv`
