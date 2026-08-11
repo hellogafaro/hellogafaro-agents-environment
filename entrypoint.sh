@@ -19,7 +19,7 @@ mkdir -p "${HOME}/chats" "${HOME}/projects"
 
 server_host="${T3_HOST:-0.0.0.0}"
 server_port="${T3_PORT:-${PORT:-3773}}"
-server_name="${T3_SERVER_NAME:-T3 Code server}"
+server_name="${T3_SERVER_NAME:-T3 Code Server}"
 
 # T3 uses PRETTY_HOSTNAME as the environment label shown to clients.
 server_name="$(printf '%s' "${server_name}" | tr '\r\n' '  ')"

@@ -23,6 +23,7 @@ ENV HOME=/data
 ENV T3CODE_HOME=/data/.t3
 ENV CODEX_HOME=/data/.codex
 ENV BUN_INSTALL=/data/.bun
+ENV SHELL=/usr/local/bin/t3-shell
 ENV PATH=/data/.bun/bin:/data/.local/bin:${PATH}
 
 WORKDIR /opt/agents-environment
@@ -30,9 +31,10 @@ WORKDIR /opt/agents-environment
 COPY AGENTS.md README.md install.sh ./
 COPY skills ./skills
 COPY entrypoint.sh /usr/local/bin/entrypoint
+COPY t3-shell.sh /usr/local/bin/t3-shell
 
-RUN chmod +x install.sh /usr/local/bin/entrypoint \
-  && find /opt/agents-environment /usr/local/bin/entrypoint -type f \
+RUN chmod +x install.sh /usr/local/bin/entrypoint /usr/local/bin/t3-shell \
+  && find /opt/agents-environment /usr/local/bin/entrypoint /usr/local/bin/t3-shell -type f \
     -exec sha256sum {} + \
     | sort \
     | sha256sum \

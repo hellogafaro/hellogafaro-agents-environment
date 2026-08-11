@@ -79,7 +79,7 @@ It honors `T3_PORT`, then the conventional platform `PORT`, and otherwise uses
 `3773`. Override `T3_HOST` or `T3_LOG_LEVEL` when required. Publish the port only
 through T3 Connect, a private network, or another authenticated relay.
 
-The environment is displayed as `T3 Code server` by default. Set
+The environment is displayed as `T3 Code Server` by default. Set
 `T3_SERVER_NAME` to give each server a distinct name, such as `Personal` or
 `Production`.
 
