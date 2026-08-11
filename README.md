@@ -38,19 +38,27 @@ create a single environment and select:
 Add repos in batches if the first Build is slow. Shopify theme-only repos can
 wait until an agent actually needs them.
 
-### 2. Secrets (Infisical, not the dashboard)
+### 2. Secrets (Infisical Universal Auth)
 
 Do not copy project `.env` files into Cursor Secrets.
 
-1. Create one Infisical machine identity with read access to product projects.
-2. Add a single environment-scoped secret in Cursor:
+1. In [Infisical](https://app.infisical.com): **Organization Settings → Access
+   Control → Machine Identities → Create identity** (Universal Auth is default).
+2. **Create Client Secret** with **TTL `0`** (never expires). Copy Client ID and
+   Client Secret — secret shown once.
+3. Add the identity to each product project with **read** access on secrets.
+4. Add two environment-scoped secrets in Cursor:
 
    | Name | Value |
    | --- | --- |
-   | `INFISICAL_TOKEN` | Infisical machine identity token |
+   | `INFISICAL_CLIENT_ID` | machine identity client id |
+   | `INFISICAL_CLIENT_SECRET` | machine identity client secret |
+
+On agent start, `.cursor/environment.json` exchanges those for a short-lived
+`INFISICAL_TOKEN`. Credentials in Cursor do not expire; tokens refresh each run.
 
 Each product repository keeps its own Infisical project and `.infisical.json`.
-Agents run commands inside that repo; Infisical resolves secrets locally:
+Agents run commands inside that repo:
 
 ```bash
 infisical run -- pnpm install
@@ -58,13 +66,16 @@ infisical run -- pnpm dev
 infisical run -- pnpm test
 ```
 
-Manage secrets from your Mac during iteration:
+Manage secrets locally during iteration:
 
 ```bash
 infisical login
 infisical secrets set KEY=value --env=dev
 infisical secrets set --file=.env --env=dev
 ```
+
+If you use Infisical EU or self-hosted, also set `INFISICAL_DOMAIN` in Cursor
+secrets.
 
 ### 3. Install script
 
@@ -108,7 +119,7 @@ Per repo: copy `AGENTS.md` and fill the `## Project` section (stack, layout,
 commands, env, constraints). Project overrides generic rules when they conflict.
 
 Secrets provider and CLI commands in this README are the current default, not
-locked in `AGENTS.md`. Swap providers in README, `install.sh`, dashboard token,
+locked in `AGENTS.md`. Swap providers in README, `install.sh`, dashboard secrets,
 and each repo's Project env block.
 
 ## Updating
