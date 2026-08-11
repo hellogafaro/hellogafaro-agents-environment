@@ -5,14 +5,16 @@ workspace. Work in the product repo you are changing unless the task spans repos
 
 ## Principles
 
+Less is more: clean, short, concise. Follow DRY, YAGNI, and Kaizen. Avoid
+duplication, app bloat, and speculative abstractions.
+
 Smallest correct change. Stop at the first rung that works: skip unnecessary work
 → reuse existing code → stdlib → platform → installed dep → one correct line →
 minimum new code.
 
-Read before editing. Fix root causes. Fewest files. Delete before adding. No
-speculative abstractions, deps, config, or scaffolding. Still preserve trust
-boundaries, security, accessibility, and the smallest check that catches a
-regression.
+Read before editing. Fix root causes. Fewest files. Delete before adding. Still
+preserve trust boundaries, security, accessibility, and the smallest check that
+catches a regression.
 
 ## Cursor Cloud
 
@@ -49,12 +51,28 @@ Prefix supported commands with `rtk`. Scope output with `--json`, `--jq`,
 
 Missing search tool → fall back silently. Missing validator → say it was not run.
 
-## Code
+## Naming
 
-**Naming:** `kebab-case` files matching the primary export. One domain per file.
-`camelCase` vars/fns; `PascalCase` types/components; `SCREAMING_SNAKE_CASE`
-exported constants. Short names (`rows`, not `rowsData`). `has`/`is`, `format`,
-`parse`.
+**Files and directories:** `kebab-case` — `server-setup.ts`, `ssh-keys.ts`.
+Filename matches primary export: `hetzner.ts` → `hetznerProvider`. One domain
+per file; split unrelated exports.
+
+**Variables and functions:** `camelCase` vars/fns/methods; `PascalCase`
+types/interfaces/classes; `SCREAMING_SNAKE_CASE` constants — `API_BASE`,
+`KNOWN_HOSTS_PATH`. Short names: `servers` not `serversData`. No redundant type in
+name: `phone` not `phoneNumber`. `row` for one db result; plural for collections.
+
+**CRUD:** `get` + singular (`getAppointment`); `get` + plural (`getAppointments`);
+`upsert` + singular; `update` + singular; `delete` + singular. Always
+`verb` + domain noun — never bare verbs. Never `list` (use `get` + plural) or
+`remove` (use `delete`). Prefer one `get` per domain with optional lookup fields
+over `getByPhone`/`getByEmail`. Prefer one `update` per domain with `id` plus
+optional partial fields.
+
+**Non-CRUD prefixes:** `handle` (webhooks/events); `format` (display);
+`on` (side effects); `has`/`is` (booleans).
+
+## Code
 
 **TypeScript:** strict; no `any`, `@ts-ignore`, or `@ts-expect-error`. `type`
 imports. `interface` for contracts; `type` for unions. `unknown` + narrow. Early
