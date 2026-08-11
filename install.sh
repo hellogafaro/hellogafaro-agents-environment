@@ -5,6 +5,7 @@ set -euo pipefail
 readonly RTK_VERSION="v0.42.4"
 readonly RTK_RELEASE_URL="https://github.com/byx-darwin/rtk/releases/download/${RTK_VERSION}"
 readonly SKILLS_REPOSITORY="${SHARED_SKILLS_REPOSITORY:-}"
+readonly REPOSITORY_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 readonly -a SHARED_SKILLS=(
   brainstorm
   deep-research
@@ -85,6 +86,36 @@ install_infisical() {
   sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq infisical
 }
 
+install_agent_instructions() {
+  local source_file="${REPOSITORY_DIR}/AGENTS.md"
+  local plugin_dir="${HOME}/.cursor/plugins/local/agents-environment"
+
+  if [[ ! -f "${source_file}" ]]; then
+    printf 'Missing agent instructions: %s\n' "${source_file}" >&2
+    exit 1
+  fi
+
+  mkdir -p "${plugin_dir}/.cursor-plugin" "${plugin_dir}/rules"
+
+  printf '%s\n' \
+    '{' \
+    '  "name": "agents-environment",' \
+    '  "version": "1.0.0",' \
+    '  "description": "Cross-project agent instructions",' \
+    '  "rules": "./rules"' \
+    '}' >"${plugin_dir}/.cursor-plugin/plugin.json"
+
+  {
+    printf '%s\n' \
+      '---' \
+      'description: Cross-project agent instructions' \
+      'alwaysApply: true' \
+      '---' \
+      ''
+    sed '1{/^# Agent instructions$/d;}' "${source_file}"
+  } >"${plugin_dir}/rules/agents-environment.mdc"
+}
+
 install_skills() {
   if [[ -z "${SKILLS_REPOSITORY}" ]]; then
     printf 'Skipping shared skills: SHARED_SKILLS_REPOSITORY is not configured.\n'
@@ -126,6 +157,7 @@ main() {
 
   install_rtk
   install_infisical
+  install_agent_instructions
   install_skills
 
   printf 'Cursor environment is ready.\n'
