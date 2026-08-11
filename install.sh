@@ -204,12 +204,14 @@ install_skills() {
 
   for skill in "${SHARED_SKILLS[@]}"; do
     if ! gh skill install "${skills_repository}" "skills/${skill}" \
-      --agent codex \
-      --scope user \
+      --dir "${HOME}/.agents/skills" \
       --force; then
       printf 'Warning: failed to install skill %s from %s\n' "${skill}" "${SKILLS_REPOSITORY}" >&2
       failed=1
+      continue
     fi
+
+    rm -rf "${HOME}/.codex/skills/${skill}"
   done
 
   if (( failed )); then
