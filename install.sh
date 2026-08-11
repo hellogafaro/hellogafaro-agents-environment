@@ -198,20 +198,22 @@ install_skills() {
   fi
 
   local skill
+  local agent
   local failed=0
   local skills_repository="${SKILLS_REPOSITORY#https://github.com/}"
   skills_repository="${skills_repository%.git}"
 
   for skill in "${SHARED_SKILLS[@]}"; do
-    if ! gh skill install "${skills_repository}" "skills/${skill}" \
-      --dir "${HOME}/.agents/skills" \
-      --force; then
-      printf 'Warning: failed to install skill %s from %s\n' "${skill}" "${SKILLS_REPOSITORY}" >&2
-      failed=1
-      continue
-    fi
-
-    rm -rf "${HOME}/.codex/skills/${skill}"
+    for agent in codex claude-code; do
+      if ! gh skill install "${skills_repository}" "skills/${skill}" \
+        --agent "${agent}" \
+        --scope user \
+        --force; then
+        printf 'Warning: failed to install skill %s for %s from %s\n' \
+          "${skill}" "${agent}" "${SKILLS_REPOSITORY}" >&2
+        failed=1
+      fi
+    done
   done
 
   if (( failed )); then
