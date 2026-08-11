@@ -1,6 +1,6 @@
 # Hello Gafaro agent instructions
 
-Shared standards for Hello Gafaro repositories and the Cursor Cloud multi-repo
+Shared standards for Hello Gafaro repositories and the cloud multi-repo
 workspace. Work in the product repo you are changing unless the task spans repos.
 
 ## Principles
@@ -16,46 +16,40 @@ Read before editing. Fix root causes. Fewest files. Delete before adding. Still
 preserve trust boundaries, security, accessibility, and the smallest check that
 catches a regression.
 
-## Cursor Cloud
+## Cloud environment
 
-Secrets live in **Infisical**, not the Cursor dashboard or committed `.env`
-files. The environment injects `INFISICAL_TOKEN`.
+Secrets live in the team secrets manager, not the cloud dashboard or committed
+env files. The environment injects the token the repo expects.
 
-```bash
-infisical run -- pnpm install
-infisical run -- pnpm dev
-infisical run -- pnpm test
-```
-
-Run commands inside the relevant repo. Never print secrets. If Infisical is not
-configured in a repo, say so — do not invent credentials.
+Run install, dev, and test through the repo's secret-injection command or
+documented wrapper script. Never print secrets. If secrets are not configured in a
+repo, say so — do not invent credentials.
 
 ## Shell
 
-Prefix supported commands with `rtk`. Scope output with `--json`, `--jq`,
-`--files`, `-l`, `--max-count`, `--glob`, `--quiet`.
+Use the repo's output-compaction wrapper for supported commands when one exists.
+Scope output with `--json`, `--jq`, `--files`, `-l`, `--max-count`, `--glob`,
+`--quiet`.
 
-| Need | Tool |
+Follow existing repo scripts and conventions first. Prefer these when available:
+
+| Need | Prefer |
 | --- | --- |
-| Search | `rg` (not `grep`) |
-| Find files | `fd` (not `find`) |
-| Pipelines | `fd -x` or `rg -l \| xargs`; avoid `find -exec` |
-| AST refactors | `ast-grep` / `sg` (TS/TSX) |
-| JSON / YAML / TOML | `jq` / `yq` |
-| GitHub | `gh`, `gh api` — never scrape github.com |
-| Perf compare | `hyperfine` |
-| Circular deps | `madge --circular` |
-| Dead code | `knip` |
-| Duplication | `jscpd` |
-| Typecheck | repo script, else `tsc --noEmit` or `tsc -b --noEmit` |
+| Search content | structured search over plain grep |
+| Find files | fast file finder over find |
+| Pipelines | simple search-then-xargs; avoid find -exec when clearer |
+| Structured data | JSON/YAML/TOML CLI filters |
+| Remote repo ops | official host CLI/API, not scraped web pages |
+| Perf compare | explicit benchmark tool when comparing commands |
+| Typecheck | repo script first; language checker second |
 
-Missing search tool → fall back silently. Missing validator → say it was not run.
+Missing preferred tool → fall back silently. Missing validator → say it was not run.
 
 ## Naming
 
-**Files and directories:** `kebab-case` — `server-setup.ts`, `ssh-keys.ts`.
-Filename matches primary export: `hetzner.ts` → `hetznerProvider`. One domain
-per file; split unrelated exports.
+**Files and directories:** `kebab-case` — `user-profile.ts`, `ssh-keys.ts`.
+Filename matches primary export: `billing.ts` → `billingService`. One domain per
+file; split unrelated exports.
 
 **Variables and functions:** `camelCase` vars/fns/methods; `PascalCase`
 types/interfaces/classes; `SCREAMING_SNAKE_CASE` constants — `API_BASE`,
@@ -74,25 +68,30 @@ optional partial fields.
 
 ## Code
 
-**TypeScript:** strict; no `any`, `@ts-ignore`, or `@ts-expect-error`. `type`
-imports. `interface` for contracts; `type` for unions. `unknown` + narrow. Early
-returns; callbacks one level max. Prefer one function with options.
+Follow the repo's language, framework, routing, styling, and component conventions.
+Do not introduce patterns the repo does not already use.
 
-**Frontend:** follow framework conventions. React Router file routes per
-https://reactrouter.com/how-to/file-route-conventions. shadcn via CLI only.
-Tailwind + project tokens; no raw hex except token definitions.
+**Typing:** strict where the repo supports it; no escape hatches unless the repo
+already allows them. Separate type-only imports. `interface` for contracts;
+`type` for unions. Narrow unknown input. Early returns; callbacks one level max.
+Prefer one function with options.
 
-**Imports:** external → local → `import type`.
+**UI:** follow framework file and route conventions. Add design-system primitives
+through the repo's generator/CLI when one exists. Use project tokens; avoid raw
+values except when defining tokens.
 
-**Comments:** JSDoc on exports only, one sentence. No inline unless opaque. No
-numbered step comments.
+**Imports:** external → local → type-only.
+
+**Comments:** doc comments on exports only, one sentence. No inline unless opaque.
+No numbered step comments.
 
 ## Quality and git
 
 Before handoff: lint, typecheck, tests, build — all green. Use repo scripts when
 names differ. `git diff --check` before commit.
 
-Tests: colocated `*.test.ts(x)` (Vitest); root `tests/*.spec.ts` (Playwright).
+Tests: follow repo layout — colocated unit tests and separate integration/e2e
+paths when the repo defines them.
 
 Commits: `type: short description` — lowercase, ≤72 chars, no trailing period.
 Types: `feat`, `fix`, `chore`, `refactor`, `docs`, `test`, `style`. Optional
