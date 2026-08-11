@@ -35,10 +35,22 @@ The installer is idempotent and installs:
 - `AGENTS.md` as an always-applied, VM-wide local Cursor plugin rule
 - the shared `brainstorm`, `deep-research`, `documentation-creation`,
   `git-operations`, `handoff`, `skills-management`, and `summarize` skills
+- `agents-environment-update` in `~/.local/bin`
 
 Project repositories keep their own project-specific instructions and skills.
 The shared instructions are installed once for the whole VM, so `AGENTS.md` does
 not need to be copied into each repository.
 
-Requirements: Linux (`x86_64` or `aarch64`), `curl`, `sudo`, and GitHub CLI 2.95
-or newer.
+## Update
+
+Run `agents-environment-update`. It fetches the latest environment repository
+into a temporary checkout and reruns the idempotent installer. This updates the
+global instructions, shared skills, tools, and the updater without changing any
+project repository.
+
+The installer discovers its Git remote automatically. Set
+`AGENTS_ENVIRONMENT_REPOSITORY` to override it or when installing outside a Git
+checkout.
+
+Requirements: Linux (`x86_64` or `aarch64`), `curl`, `git`, `sudo`, and GitHub
+CLI 2.95 or newer.

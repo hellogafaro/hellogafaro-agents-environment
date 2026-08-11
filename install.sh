@@ -116,6 +116,25 @@ install_agent_instructions() {
   } >"${plugin_dir}/rules/agents-environment.mdc"
 }
 
+install_updater() {
+  local repository="${AGENTS_ENVIRONMENT_REPOSITORY:-}"
+  local config_dir="${HOME}/.config/agents-environment"
+
+  if [[ -z "${repository}" ]] && command -v git >/dev/null 2>&1; then
+    repository="$(git -C "${REPOSITORY_DIR}" remote get-url origin 2>/dev/null || true)"
+  fi
+
+  if [[ -z "${repository}" ]]; then
+    printf 'Warning: updater not configured; set AGENTS_ENVIRONMENT_REPOSITORY.\n' >&2
+    return 0
+  fi
+
+  mkdir -p "${HOME}/.local/bin" "${config_dir}"
+  install -m 0755 "${REPOSITORY_DIR}/update.sh" \
+    "${HOME}/.local/bin/agents-environment-update"
+  printf '%s\n' "${repository}" >"${config_dir}/repository"
+}
+
 install_skills() {
   if [[ -z "${SKILLS_REPOSITORY}" ]]; then
     printf 'Skipping shared skills: SHARED_SKILLS_REPOSITORY is not configured.\n'
@@ -158,6 +177,7 @@ main() {
   install_rtk
   install_infisical
   install_agent_instructions
+  install_updater
   install_skills
 
   printf 'Cursor environment is ready.\n'
