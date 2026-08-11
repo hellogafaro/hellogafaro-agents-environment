@@ -91,11 +91,6 @@ install_git_tools() {
 
   sudo apt-get update -qq
   sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq git gh
-
-  if ! gh skill install --help >/dev/null 2>&1; then
-    printf 'GitHub CLI does not include gh skill support after update.\n' >&2
-    exit 1
-  fi
 }
 
 install_bun() {
@@ -199,11 +194,6 @@ install_cli() {
 install_skills() {
   if [[ -z "${SKILLS_REPOSITORY}" ]]; then
     printf 'Skipping shared skills: SHARED_SKILLS_REPOSITORY is not configured.\n'
-    return 0
-  fi
-
-  if ! gh skill install --help >/dev/null 2>&1; then
-    printf 'Warning: GitHub CLI 2.95 or newer with gh skill support is required.\n' >&2
     return 0
   fi
 
