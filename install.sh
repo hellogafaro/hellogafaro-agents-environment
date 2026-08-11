@@ -4,7 +4,9 @@ set -euo pipefail
 
 readonly RTK_VERSION="v0.42.4"
 readonly RTK_RELEASE_URL="https://github.com/byx-darwin/rtk/releases/download/${RTK_VERSION}"
-readonly SKILLS_REPOSITORY="${SHARED_SKILLS_REPOSITORY:-}"
+readonly DEFAULT_ENVIRONMENT_REPOSITORY="https://github.com/hellogafaro/hellogafaro-agents-environment"
+readonly DEFAULT_SKILLS_REPOSITORY="https://github.com/hellogafaro/hellogafaro-skills"
+readonly SKILLS_REPOSITORY="${SHARED_SKILLS_REPOSITORY:-${DEFAULT_SKILLS_REPOSITORY}}"
 readonly REPOSITORY_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 readonly -a SHARED_SKILLS=(
   brainstorm
@@ -173,7 +175,7 @@ install_environment_skills() {
 }
 
 install_cli() {
-  local repository="${AGENTS_ENVIRONMENT_REPOSITORY:-}"
+  local repository="${AGENTS_ENVIRONMENT_REPOSITORY:-${DEFAULT_ENVIRONMENT_REPOSITORY}}"
   local config_dir="${HOME}/.config/agents-environment"
 
   if [[ -z "${repository}" ]] && command -v git >/dev/null 2>&1; then
@@ -204,9 +206,11 @@ install_skills() {
 
   local skill
   local failed=0
+  local skills_repository="${SKILLS_REPOSITORY#https://github.com/}"
+  skills_repository="${skills_repository%.git}"
 
   for skill in "${SHARED_SKILLS[@]}"; do
-    if ! gh skill install "${SKILLS_REPOSITORY}" "skills/${skill}" \
+    if ! gh skill install "${skills_repository}" "skills/${skill}" \
       --agent codex \
       --scope user \
       --force; then
@@ -258,6 +262,10 @@ update_environment() {
 
   if [[ -z "${repository}" && -f "${config_file}" ]]; then
     repository="$(<"${config_file}")"
+  fi
+
+  if [[ -z "${repository}" ]]; then
+    repository="${DEFAULT_ENVIRONMENT_REPOSITORY}"
   fi
 
   if [[ -z "${repository}" ]]; then

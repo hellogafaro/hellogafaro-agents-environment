@@ -40,9 +40,9 @@ skills repository. `t3-uploads` publishes explicitly requested files through
 tmpfiles.org. `t3-routines` documents the routines CLI and requires its scheduler
 runtime to be installed separately.
 
-Set `SHARED_SKILLS_REPOSITORY` to the `owner/repository` containing the shared
-skills. Set `AGENTS_ENVIRONMENT_REPOSITORY` to this repository's Git URL when the
-installer cannot discover it from the current checkout.
+The updater and shared-skills repository have working defaults. Override them
+with `AGENTS_ENVIRONMENT_REPOSITORY` and `SHARED_SKILLS_REPOSITORY` when using a
+fork or another skills collection.
 
 ## Update
 
@@ -76,6 +76,10 @@ The server listens on `0.0.0.0:3773` by default so container relays can reach it
 It honors `T3_PORT`, then the conventional platform `PORT`, and otherwise uses
 `3773`. Override `T3_HOST` or `T3_LOG_LEVEL` when required. Publish the port only
 through T3 Connect, a private network, or another authenticated relay.
+
+The environment is displayed as `T3 Code server` by default. Set
+`T3_SERVER_NAME` to give each server a distinct name, such as `Personal` or
+`Production`.
 
 Configure Infisical with `INFISICAL_DOMAIN`, `INFISICAL_CLIENT_ID`, and
 `INFISICAL_CLIENT_SECRET`. Run project commands with `infisical run -- <command>`.
