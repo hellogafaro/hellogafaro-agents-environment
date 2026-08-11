@@ -12,10 +12,13 @@ if [ ! -f "${install_marker}" ] || [ ! -x "${HOME}/.local/bin/t3" ] || [ ! -f "$
 fi
 mkdir -p "${HOME}/chats" "${HOME}/projects"
 
+server_host="${T3_HOST:-0.0.0.0}"
+server_port="${T3_PORT:-${PORT:-3773}}"
+
 exec t3 serve \
   --mode web \
-  --host "${T3_HOST:-127.0.0.1}" \
-  --port "${T3_PORT:-3773}" \
+  --host "${server_host}" \
+  --port "${server_port}" \
   --no-browser \
   --log-level "${T3_LOG_LEVEL:-warn}" \
   "${HOME}"

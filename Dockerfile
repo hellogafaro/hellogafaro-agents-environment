@@ -35,4 +35,11 @@ RUN chmod +x install.sh /usr/local/bin/entrypoint
 
 WORKDIR /data
 
+EXPOSE 3773
+
+HEALTHCHECK --interval=10s --timeout=5s --start-period=120s --retries=6 \
+  CMD curl --fail --silent --show-error \
+    "http://127.0.0.1:${T3_PORT:-${PORT:-3773}}/.well-known/t3/environment" \
+    >/dev/null || exit 1
+
 ENTRYPOINT ["entrypoint"]

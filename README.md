@@ -72,9 +72,10 @@ T3 Code uses `/data` as its root and the entrypoint creates:
 /data/projects  Projects, whether or not they are Git repositories
 ```
 
-The server listens on `127.0.0.1:3773` by default. Override `T3_HOST`, `T3_PORT`,
-or `T3_LOG_LEVEL` when required. Use T3 Connect or a private network rather than
-exposing the server directly.
+The server listens on `0.0.0.0:3773` by default so container relays can reach it.
+It honors `T3_PORT`, then the conventional platform `PORT`, and otherwise uses
+`3773`. Override `T3_HOST` or `T3_LOG_LEVEL` when required. Publish the port only
+through T3 Connect, a private network, or another authenticated relay.
 
 Configure Infisical with `INFISICAL_DOMAIN`, `INFISICAL_CLIENT_ID`, and
 `INFISICAL_CLIENT_SECRET`. Run project commands with `infisical run -- <command>`.
