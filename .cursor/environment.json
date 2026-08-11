@@ -1,0 +1,7 @@
+{
+  "name": "Hello Gafaro Cursor environment",
+  "install": "bash install.sh",
+  "repositoryDependencies": [
+    "github.com/hellogafaro/hellogafaro-skills"
+  ]
+}

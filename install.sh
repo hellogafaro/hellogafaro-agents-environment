@@ -66,6 +66,10 @@ install_rtk() {
     trap - EXIT
   fi
 
+  # rtk always writes its canonical RTK.md into ~/.claude, even for --agent
+  # cursor, and fails if the directory is missing on a fresh machine.
+  mkdir -p "${HOME}/.claude"
+
   rtk init --global --agent cursor --auto-patch
 }
 
