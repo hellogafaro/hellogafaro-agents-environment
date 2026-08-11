@@ -36,6 +36,9 @@ It creates these provider-compatible links:
 ~/.claude/skills     -> ~/.agents/skills
 ```
 
+Skills are installed once in `~/.agents/skills`. Codex reads that canonical
+directory directly; Claude discovers it through the link above.
+
 Project repositories may add their own project-specific instructions and skills.
 
 The bundled T3 skills belong to this environment repository, not the shared

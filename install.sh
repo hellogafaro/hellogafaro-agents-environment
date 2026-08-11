@@ -156,7 +156,7 @@ install_agent_instructions() {
   install -m 0644 "${source_file}" "${agents_dir}/AGENTS.md"
   replace_symlink "${agents_dir}/AGENTS.md" "${HOME}/.codex/AGENTS.md"
   replace_symlink "${agents_dir}/AGENTS.md" "${HOME}/.claude/CLAUDE.md"
-  replace_symlink "${agents_dir}/skills" "${HOME}/.claude/skills"
+  replace_symlink "../.agents/skills" "${HOME}/.claude/skills"
 }
 
 install_environment_skills() {
@@ -202,22 +202,20 @@ install_skills() {
   fi
 
   local skill
-  local agent
   local failed=0
+  local target_dir="${HOME}/.agents/skills"
   local skills_repository="${SKILLS_REPOSITORY#https://github.com/}"
   skills_repository="${skills_repository%.git}"
 
+  mkdir -p "${target_dir}"
   for skill in "${SHARED_SKILLS[@]}"; do
-    for agent in codex claude-code; do
-      if ! gh skill install "${skills_repository}" "skills/${skill}" \
-        --agent "${agent}" \
-        --scope user \
-        --force; then
-        printf 'Warning: failed to install skill %s for %s from %s\n' \
-          "${skill}" "${agent}" "${SKILLS_REPOSITORY}" >&2
-        failed=1
-      fi
-    done
+    if ! gh skill install "${skills_repository}" "skills/${skill}" \
+      --dir "${target_dir}" \
+      --force; then
+      printf 'Warning: failed to install skill %s from %s\n' \
+        "${skill}" "${SKILLS_REPOSITORY}" >&2
+      failed=1
+    fi
   done
 
   if (( failed )); then
