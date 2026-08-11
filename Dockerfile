@@ -10,14 +10,19 @@ RUN apt-get update \
     git \
     jq \
     openssh-client \
+    python3 \
+    python3-pip \
+    python3-venv \
     ripgrep \
     sudo \
+    unzip \
   && rm -rf /var/lib/apt/lists/*
 
 ENV HOME=/data
 ENV T3CODE_HOME=/data/.t3
 ENV CODEX_HOME=/data/.codex
-ENV PATH=/data/.local/bin:${PATH}
+ENV BUN_INSTALL=/data/.bun
+ENV PATH=/data/.bun/bin:/data/.local/bin:${PATH}
 
 WORKDIR /opt/agents-environment
 

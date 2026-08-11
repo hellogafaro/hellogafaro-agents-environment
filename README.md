@@ -14,6 +14,9 @@ bash install.sh install
 The installer is idempotent and installs or updates:
 
 - T3 Code
+- Node.js with npm
+- Bun
+- Python with pip and `venv`
 - RTK for Claude Code and Codex
 - Infisical CLI
 - shared skills in `~/.agents/skills`
@@ -59,3 +62,6 @@ exposing the server directly.
 Configure Infisical with `INFISICAL_DOMAIN`, `INFISICAL_CLIENT_ID`, and
 `INFISICAL_CLIENT_SECRET`. Run project commands with `infisical run -- <command>`.
 Provider authentication is managed through T3 Code and the provider CLIs.
+
+Keep application dependencies in each project's package or lock files. The
+global environment intentionally contains runtimes and universal CLI tools only.

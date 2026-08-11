@@ -3,6 +3,8 @@
 set -eu
 
 environment_dir="${AGENTS_ENVIRONMENT_DIR:-/opt/agents-environment}"
+export BUN_INSTALL="${BUN_INSTALL:-${HOME}/.bun}"
+export PATH="${BUN_INSTALL}/bin:${HOME}/.local/bin:${PATH}"
 
 bash "${environment_dir}/install.sh" install
 mkdir -p "${HOME}/workspaces"

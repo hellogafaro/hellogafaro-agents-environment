@@ -16,7 +16,8 @@ readonly -a SHARED_SKILLS=(
   summarize
 )
 
-export PATH="${HOME}/.local/bin:${PATH}"
+export BUN_INSTALL="${HOME}/.bun"
+export PATH="${BUN_INSTALL}/bin:${HOME}/.local/bin:${PATH}"
 
 require_command() {
   if ! command -v "$1" >/dev/null 2>&1; then
@@ -83,6 +84,27 @@ install_infisical() {
   curl -1sLf 'https://artifacts-cli.infisical.com/setup.deb.sh' | sudo -E bash
   sudo apt-get update -qq
   sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq infisical
+}
+
+install_bun() {
+  if command -v bun >/dev/null 2>&1; then
+    bun upgrade --stable
+    return 0
+  fi
+
+  require_command unzip
+  curl -fsSL https://bun.com/install | bash
+}
+
+install_python() {
+  if command -v python3 >/dev/null 2>&1; then
+    return 0
+  fi
+
+  require_command sudo
+  sudo apt-get update -qq
+  sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq \
+    python3 python3-pip python3-venv
 }
 
 install_t3() {
@@ -179,6 +201,8 @@ install_environment() {
 
   install_rtk
   install_infisical
+  install_bun
+  install_python
   install_t3
   install_agent_instructions
   install_cli
