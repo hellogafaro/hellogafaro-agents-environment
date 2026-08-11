@@ -52,8 +52,15 @@ and itself without modifying project repositories.
 ## Server
 
 Build the included `Dockerfile` and persist `/data`. T3 Code state, provider
-configuration, credentials, shared agent configuration, and workspaces then
+configuration, credentials, shared agent configuration, chats, and projects then
 survive container replacements.
+
+T3 Code uses `/data` as its root and the entrypoint creates:
+
+```text
+/data/chats     Quick questions and temporary work
+/data/projects  Projects, whether or not they are Git repositories
+```
 
 The server listens on `127.0.0.1:3773` by default. Override `T3_HOST`, `T3_PORT`,
 or `T3_LOG_LEVEL` when required. Use T3 Connect or a private network rather than

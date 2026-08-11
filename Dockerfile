@@ -31,6 +31,6 @@ COPY entrypoint.sh /usr/local/bin/entrypoint
 
 RUN chmod +x install.sh /usr/local/bin/entrypoint
 
-WORKDIR /data/workspaces
+WORKDIR /data
 
 ENTRYPOINT ["entrypoint"]
