@@ -18,7 +18,7 @@ The installer is idempotent and installs or updates:
 - Node.js with npm
 - Bun
 - Python with pip and `venv`
-- Git and GitHub CLI
+- Git and the latest GitHub CLI from GitHub's official package repository
 - RTK for Claude Code and Codex
 - shared skills in `~/.agents/skills`
 - shared instructions in `~/.agents/AGENTS.md`
@@ -53,8 +53,8 @@ agents-environment update
 ```
 
 The command fetches the latest environment repository and runs the same installer.
-It updates T3 Code, RTK, shared instructions, shared skills, and itself without
-modifying project repositories.
+It updates T3 Code, Codex CLI, Claude Code CLI, Bun, GitHub CLI, shared
+instructions, shared skills, and itself without modifying project repositories.
 
 Normal server restarts use the persisted installation and do not require network
 access. A newly deployed image reruns installation once when its bundled

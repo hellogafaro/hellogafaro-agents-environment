@@ -9,6 +9,7 @@ readonly DEFAULT_SKILLS_REPOSITORY="https://github.com/hellogafaro/hellogafaro-s
 readonly SKILLS_REPOSITORY="${SHARED_SKILLS_REPOSITORY:-${DEFAULT_SKILLS_REPOSITORY}}"
 readonly REPOSITORY_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 readonly -a SHARED_SKILLS=(
+  accounts-operations
   brainstorm
   deep-research
   documentation-creation
@@ -77,13 +78,24 @@ install_rtk() {
 }
 
 install_git_tools() {
-  if command -v git >/dev/null 2>&1 && command -v gh >/dev/null 2>&1; then
-    return 0
-  fi
-
   require_command sudo
+  require_command curl
+
+  sudo mkdir -p -m 755 /etc/apt/keyrings
+  curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
+    | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg >/dev/null
+  sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
+  printf '%s\n' \
+    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
+    | sudo tee /etc/apt/sources.list.d/github-cli.list >/dev/null
+
   sudo apt-get update -qq
   sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq git gh
+
+  if ! gh skill install --help >/dev/null 2>&1; then
+    printf 'GitHub CLI does not include gh skill support after update.\n' >&2
+    exit 1
+  fi
 }
 
 install_bun() {
@@ -268,6 +280,8 @@ update_environment() {
 
   git clone --depth 1 --quiet "${repository}" "${temp_dir}/repository"
   bash "${temp_dir}/repository/install.sh" install
+  rm -rf "${temp_dir}"
+  trap - EXIT
 }
 
 case "${1:-install}" in
