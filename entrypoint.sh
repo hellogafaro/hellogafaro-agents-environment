@@ -3,10 +3,13 @@
 set -eu
 
 environment_dir="${AGENTS_ENVIRONMENT_DIR:-/opt/agents-environment}"
+install_marker="${HOME}/.config/agents-environment/installed"
 export BUN_INSTALL="${BUN_INSTALL:-${HOME}/.bun}"
 export PATH="${BUN_INSTALL}/bin:${HOME}/.local/bin:${PATH}"
 
-bash "${environment_dir}/install.sh" install
+if [ ! -f "${install_marker}" ] || [ ! -x "${HOME}/.local/bin/t3" ] || [ ! -f "${HOME}/.agents/AGENTS.md" ]; then
+  bash "${environment_dir}/install.sh" install
+fi
 mkdir -p "${HOME}/chats" "${HOME}/projects"
 
 exec t3 serve \

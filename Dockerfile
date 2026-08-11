@@ -28,6 +28,7 @@ ENV PATH=/data/.bun/bin:/data/.local/bin:${PATH}
 WORKDIR /opt/agents-environment
 
 COPY AGENTS.md README.md install.sh ./
+COPY skills ./skills
 COPY entrypoint.sh /usr/local/bin/entrypoint
 
 RUN chmod +x install.sh /usr/local/bin/entrypoint

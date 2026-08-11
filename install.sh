@@ -71,7 +71,7 @@ install_rtk() {
   mkdir -p "${HOME}/.claude"
 
   rtk init --global --auto-patch
-  rtk init --global --codex --auto-patch
+  rtk init --global --codex
 }
 
 install_infisical() {
@@ -150,6 +150,23 @@ install_agent_instructions() {
   replace_symlink "${agents_dir}/skills" "${HOME}/.claude/skills"
 }
 
+install_environment_skills() {
+  local source_dir="${REPOSITORY_DIR}/skills"
+  local target_dir="${HOME}/.agents/skills"
+  local skill_dir=""
+
+  if [[ ! -d "${source_dir}" ]]; then
+    return 0
+  fi
+
+  mkdir -p "${target_dir}"
+  for skill_dir in "${source_dir}"/*; do
+    [[ -d "${skill_dir}" ]] || continue
+    mkdir -p "${target_dir}/${skill_dir##*/}"
+    cp -a "${skill_dir}/." "${target_dir}/${skill_dir##*/}/"
+  done
+}
+
 install_cli() {
   local repository="${AGENTS_ENVIRONMENT_REPOSITORY:-}"
   local config_dir="${HOME}/.config/agents-environment"
@@ -201,6 +218,7 @@ install_skills() {
 install_environment() {
   require_command curl
   require_command awk
+  require_command cp
   require_command install
   require_command ln
   require_command mktemp
@@ -215,8 +233,12 @@ install_environment() {
   install_python
   install_t3
   install_agent_instructions
+  install_environment_skills
   install_cli
   install_skills
+
+  mkdir -p "${HOME}/.config/agents-environment"
+  touch "${HOME}/.config/agents-environment/installed"
 
   printf 'Agents environment is ready.\n'
 }

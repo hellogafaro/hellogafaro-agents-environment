@@ -22,6 +22,7 @@ The installer is idempotent and installs or updates:
 - Infisical CLI
 - shared skills in `~/.agents/skills`
 - shared instructions in `~/.agents/AGENTS.md`
+- T3-only `t3-uploads` and `t3-routines` skills
 - the `agents-environment` management command
 
 It creates these provider-compatible links:
@@ -33,6 +34,11 @@ It creates these provider-compatible links:
 ```
 
 Project repositories may add their own project-specific instructions and skills.
+
+The bundled T3 skills belong to this environment repository, not the shared
+skills repository. `t3-uploads` publishes explicitly requested files through
+tmpfiles.org. `t3-routines` documents the routines CLI and requires its scheduler
+runtime to be installed separately.
 
 Set `SHARED_SKILLS_REPOSITORY` to the `owner/repository` containing the shared
 skills. Set `AGENTS_ENVIRONMENT_REPOSITORY` to this repository's Git URL when the
@@ -49,6 +55,9 @@ agents-environment update
 The command fetches the latest environment repository and runs the same installer.
 It updates T3 Code, RTK, Infisical when needed, shared instructions, shared skills,
 and itself without modifying project repositories.
+
+Normal server restarts use the persisted installation and do not require network
+access. Run the update command explicitly to refresh the environment.
 
 ## Server
 
