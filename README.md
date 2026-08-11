@@ -17,6 +17,7 @@ The installer is idempotent and installs or updates:
 - Node.js with npm
 - Bun
 - Python with pip and `venv`
+- Git and GitHub CLI
 - RTK for Claude Code and Codex
 - Infisical CLI
 - shared skills in `~/.agents/skills`

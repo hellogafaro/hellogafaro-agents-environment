@@ -86,6 +86,16 @@ install_infisical() {
   sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq infisical
 }
 
+install_git_tools() {
+  if command -v git >/dev/null 2>&1 && command -v gh >/dev/null 2>&1; then
+    return 0
+  fi
+
+  require_command sudo
+  sudo apt-get update -qq
+  sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq git gh
+}
+
 install_bun() {
   if command -v bun >/dev/null 2>&1; then
     bun upgrade --stable
@@ -190,7 +200,6 @@ install_skills() {
 
 install_environment() {
   require_command curl
-  require_command gh
   require_command awk
   require_command install
   require_command ln
@@ -199,6 +208,7 @@ install_environment() {
   require_command tar
   require_command uname
 
+  install_git_tools
   install_rtk
   install_infisical
   install_bun
