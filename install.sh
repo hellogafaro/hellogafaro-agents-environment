@@ -116,7 +116,7 @@ install_agent_instructions() {
   } >"${plugin_dir}/rules/agents-environment.mdc"
 }
 
-install_updater() {
+install_cli() {
   local repository="${AGENTS_ENVIRONMENT_REPOSITORY:-}"
   local config_dir="${HOME}/.config/agents-environment"
 
@@ -125,13 +125,13 @@ install_updater() {
   fi
 
   if [[ -z "${repository}" ]]; then
-    printf 'Warning: updater not configured; set AGENTS_ENVIRONMENT_REPOSITORY.\n' >&2
+    printf 'Warning: update source not configured; set AGENTS_ENVIRONMENT_REPOSITORY.\n' >&2
     return 0
   fi
 
   mkdir -p "${HOME}/.local/bin" "${config_dir}"
-  install -m 0755 "${REPOSITORY_DIR}/update.sh" \
-    "${HOME}/.local/bin/agents-environment-update"
+  install -m 0755 "${REPOSITORY_DIR}/install.sh" \
+    "${HOME}/.local/bin/agents-environment"
   printf '%s\n' "${repository}" >"${config_dir}/repository"
 }
 
@@ -164,7 +164,7 @@ install_skills() {
   fi
 }
 
-main() {
+install_environment() {
   require_command curl
   require_command gh
   require_command awk
@@ -177,10 +177,49 @@ main() {
   install_rtk
   install_infisical
   install_agent_instructions
-  install_updater
+  install_cli
   install_skills
 
   printf 'Cursor environment is ready.\n'
 }
 
-main "$@"
+update_environment() {
+  local config_file="${HOME}/.config/agents-environment/repository"
+  local repository="${AGENTS_ENVIRONMENT_REPOSITORY:-}"
+  local temp_dir=""
+
+  require_command git
+  require_command mktemp
+
+  if [[ -z "${repository}" && -f "${config_file}" ]]; then
+    repository="$(<"${config_file}")"
+  fi
+
+  if [[ -z "${repository}" ]]; then
+    printf 'Set AGENTS_ENVIRONMENT_REPOSITORY to the environment repository URL.\n' >&2
+    exit 1
+  fi
+
+  temp_dir="$(mktemp -d)"
+  trap 'rm -rf "${temp_dir}"' EXIT
+
+  git clone --depth 1 --quiet "${repository}" "${temp_dir}/repository"
+  bash "${temp_dir}/repository/install.sh" install
+}
+
+case "${1:-install}" in
+  install)
+    if [[ -f "${REPOSITORY_DIR}/AGENTS.md" ]]; then
+      install_environment
+    else
+      update_environment
+    fi
+    ;;
+  update)
+    update_environment
+    ;;
+  *)
+    printf 'Usage: %s {install|update}\n' "${0##*/}" >&2
+    exit 2
+    ;;
+esac

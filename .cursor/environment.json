@@ -1,6 +1,6 @@
 {
   "name": "Cursor agent environment",
-  "install": "bash install.sh",
+  "install": "bash install.sh install",
   "start": "export INFISICAL_TOKEN=$(infisical login --method=universal-auth --client-id=\"$INFISICAL_CLIENT_ID\" --client-secret=\"$INFISICAL_CLIENT_SECRET\" --silent --plain)",
   "repositoryDependencies": []
 }

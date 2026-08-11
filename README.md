@@ -10,7 +10,7 @@ Use this repository as the Cursor environment repository. Its
 If the environment uses another repository, give this repository to the agent
 setting it up and apply the same configuration manually:
 
-1. Run `bash install.sh` during Build.
+1. Run `bash install.sh install` during Build.
 2. On start, authenticate Infisical and export the token:
 
    ```bash
@@ -35,7 +35,7 @@ The installer is idempotent and installs:
 - `AGENTS.md` as an always-applied, VM-wide local Cursor plugin rule
 - the shared `brainstorm`, `deep-research`, `documentation-creation`,
   `git-operations`, `handoff`, `skills-management`, and `summarize` skills
-- `agents-environment-update` in `~/.local/bin`
+- the `agents-environment` management command in `~/.local/bin`
 
 Project repositories keep their own project-specific instructions and skills.
 The shared instructions are installed once for the whole VM, so `AGENTS.md` does
@@ -43,10 +43,13 @@ not need to be copied into each repository.
 
 ## Update
 
-Run `agents-environment-update`. It fetches the latest environment repository
+Run `agents-environment update`. It fetches the latest environment repository
 into a temporary checkout and reruns the idempotent installer. This updates the
 global instructions, shared skills, tools, and the updater without changing any
 project repository.
+
+Both setup and updates use the same `agents-environment` command and installation
+path. `install.sh` is only the initial repository bootstrap.
 
 The installer discovers its Git remote automatically. Set
 `AGENTS_ENVIRONMENT_REPOSITORY` to override it or when installing outside a Git
