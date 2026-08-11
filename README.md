@@ -122,17 +122,13 @@ No other secrets belong in this repository.
 
 ## Agent instructions
 
-`AGENTS.md` holds shared principles — vendor- and framework-agnostic, with no
-`## Project` section. Apply it to every project by pasting it into a Cursor Team
-Rule. Cloud agents only inject a repo-root `AGENTS.md`, so a global file on disk is
-not a substitute.
+`AGENTS.md` contains the cross-project instructions for every Hello Gafaro agent.
+Configure its contents once as the environment-wide Cursor Team Rule. Do not copy
+it into product repositories.
 
-Per repo: add an `AGENTS.md` at the repo root with a `## Project` section (stack,
-layout, commands, env, constraints). Project specifics override these shared rules.
-
-Secrets provider and CLI commands in this README are the current default, not
-locked in `AGENTS.md`. Swap providers in README, `install.sh`, dashboard secrets,
-and each repo's Project env block.
+Product repositories may define their own `AGENTS.md` with only the context and
+instructions specific to that project. Those instructions supplement this shared
+baseline.
 
 ## Updating
 
