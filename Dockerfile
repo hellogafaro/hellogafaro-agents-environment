@@ -3,6 +3,8 @@ FROM node:24-bookworm
 ARG T3_VERSION=0.0.33
 ARG CODEX_VERSION=0.147.0
 
+RUN printf 'PRETTY_HOSTNAME="t3-server"\n' > /etc/machine-info
+
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
     build-essential \
