@@ -31,7 +31,12 @@ COPY AGENTS.md README.md install.sh ./
 COPY skills ./skills
 COPY entrypoint.sh /usr/local/bin/entrypoint
 
-RUN chmod +x install.sh /usr/local/bin/entrypoint
+RUN chmod +x install.sh /usr/local/bin/entrypoint \
+  && find /opt/agents-environment /usr/local/bin/entrypoint -type f \
+    -exec sha256sum {} + \
+    | sort \
+    | sha256sum \
+    | cut -d ' ' -f 1 > /opt/agents-environment/.release
 
 WORKDIR /data
 

@@ -4,11 +4,16 @@ set -eu
 
 environment_dir="${AGENTS_ENVIRONMENT_DIR:-/opt/agents-environment}"
 install_marker="${HOME}/.config/agents-environment/installed"
+release_file="${environment_dir}/.release"
 export BUN_INSTALL="${BUN_INSTALL:-${HOME}/.bun}"
 export PATH="${BUN_INSTALL}/bin:${HOME}/.local/bin:${PATH}"
 
-if [ ! -f "${install_marker}" ] || [ ! -x "${HOME}/.local/bin/t3" ] || [ ! -f "${HOME}/.agents/AGENTS.md" ]; then
+current_release="$(cat "${release_file}" 2>/dev/null || printf 'development')"
+installed_release="$(cat "${install_marker}" 2>/dev/null || true)"
+
+if [ "${installed_release}" != "${current_release}" ] || [ ! -x "${HOME}/.local/bin/t3" ] || [ ! -f "${HOME}/.agents/AGENTS.md" ]; then
   bash "${environment_dir}/install.sh" install
+  printf '%s\n' "${current_release}" >"${install_marker}"
 fi
 mkdir -p "${HOME}/chats" "${HOME}/projects"
 

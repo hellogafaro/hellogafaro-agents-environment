@@ -57,7 +57,9 @@ It updates T3 Code, RTK, Infisical when needed, shared instructions, shared skil
 and itself without modifying project repositories.
 
 Normal server restarts use the persisted installation and do not require network
-access. Run the update command explicitly to refresh the environment.
+access. A newly deployed image reruns installation once when its bundled
+configuration changes. Run the update command explicitly to refresh the
+environment without redeploying.
 
 ## Server
 
