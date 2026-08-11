@@ -15,6 +15,9 @@ The installer is idempotent and installs or updates:
 - T3 Code
 - Codex CLI
 - Claude Code CLI
+- Cursor CLI
+- Grok Build CLI
+- OpenCode CLI
 - Node.js with npm
 - Bun
 - Python with pip and `venv`
@@ -84,6 +87,16 @@ The environment is displayed as `T3 Code Server` by default. Set
 `Production`.
 
 Provider authentication is managed through T3 Code and the provider CLIs.
+
+Authenticate providers on the server, then enable them in T3 Code settings:
+
+```bash
+codex login
+claude auth login
+agent login
+grok login --device-auth
+opencode auth login
+```
 
 Keep application dependencies in each project's package or lock files. The
 global environment intentionally contains runtimes and universal CLI tools only.

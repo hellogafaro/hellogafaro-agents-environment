@@ -119,7 +119,11 @@ install_agent_clis() {
   npm install --global --silent --prefix "${HOME}/.local" \
     t3@latest \
     @openai/codex@latest \
-    @anthropic-ai/claude-code@latest
+    @anthropic-ai/claude-code@latest \
+    opencode-ai@latest
+
+  curl https://cursor.com/install -fsS | bash
+  curl -fsSL https://x.ai/cli/install.sh | bash
 }
 
 replace_symlink() {
