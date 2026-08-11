@@ -1,8 +1,6 @@
 {
-  "name": "Hello Gafaro Cursor environment",
+  "name": "Cursor agent environment",
   "install": "bash install.sh",
   "start": "export INFISICAL_TOKEN=$(infisical login --method=universal-auth --client-id=\"$INFISICAL_CLIENT_ID\" --client-secret=\"$INFISICAL_CLIENT_SECRET\" --silent --plain)",
-  "repositoryDependencies": [
-    "github.com/hellogafaro/hellogafaro-skills"
-  ]
+  "repositoryDependencies": []
 }

@@ -4,7 +4,7 @@ set -euo pipefail
 
 readonly RTK_VERSION="v0.42.4"
 readonly RTK_RELEASE_URL="https://github.com/byx-darwin/rtk/releases/download/${RTK_VERSION}"
-readonly SKILLS_REPOSITORY="hellogafaro/hellogafaro-skills"
+readonly SKILLS_REPOSITORY="${SHARED_SKILLS_REPOSITORY:-}"
 readonly -a SHARED_SKILLS=(
   brainstorm
   deep-research
@@ -86,6 +86,11 @@ install_infisical() {
 }
 
 install_skills() {
+  if [[ -z "${SKILLS_REPOSITORY}" ]]; then
+    printf 'Skipping shared skills: SHARED_SKILLS_REPOSITORY is not configured.\n'
+    return 0
+  fi
+
   if ! gh skill install --help >/dev/null 2>&1; then
     printf 'Warning: GitHub CLI 2.95 or newer with gh skill support is required.\n' >&2
     return 0
@@ -123,7 +128,7 @@ main() {
   install_infisical
   install_skills
 
-  printf 'Hello Gafaro Cursor environment is ready.\n'
+  printf 'Cursor environment is ready.\n'
 }
 
 main "$@"
