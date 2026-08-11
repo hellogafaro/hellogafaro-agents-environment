@@ -1,7 +1,7 @@
 {
   "name": "Hello Gafaro Cursor environment",
   "install": "bash install.sh",
-  "start": "export INFISICAL_DOMAIN=\"https://secrets.ongafaro.com\" && export INFISICAL_TOKEN=$(infisical login --method=universal-auth --client-id=\"$INFISICAL_CLIENT_ID\" --client-secret=\"$INFISICAL_CLIENT_SECRET\" --silent --plain)",
+  "start": "export INFISICAL_TOKEN=$(infisical login --method=universal-auth --client-id=\"$INFISICAL_CLIENT_ID\" --client-secret=\"$INFISICAL_CLIENT_SECRET\" --silent --plain)",
   "repositoryDependencies": [
     "github.com/hellogafaro/hellogafaro-skills"
   ]

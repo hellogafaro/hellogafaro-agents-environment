@@ -40,24 +40,31 @@ wait until an agent actually needs them.
 
 ### 2. Secrets (Infisical Universal Auth)
 
-Self-hosted at **https://secrets.ongafaro.com** (set in `.cursor/environment.json`
-`start` script). Do not copy project `.env` files into Cursor Secrets.
+Self-hosted at **https://secrets.ongafaro.com**. Do not copy project `.env` files
+into Cursor Secrets.
 
 1. In Infisical: **Organization Settings → Access Control → Machine Identities →
    Create identity** (Universal Auth is default).
 2. **Create Client Secret** with **TTL `0`** (never expires). Copy Client ID and
    Client Secret — secret shown once.
 3. Add the identity to each product project with **read** access on secrets.
-4. Add two environment-scoped secrets in Cursor:
+4. In Cursor environment settings:
+
+   **Secrets**
 
    | Name | Value |
    | --- | --- |
    | `INFISICAL_CLIENT_ID` | machine identity client id |
    | `INFISICAL_CLIENT_SECRET` | machine identity client secret |
 
-On agent start, `.cursor/environment.json` logs in to `secrets.ongafaro.com` and
-sets `INFISICAL_TOKEN`. Credentials in Cursor do not expire; tokens refresh each
-run.
+   **Environment variables** (not secrets)
+
+   | Name | Value |
+   | --- | --- |
+   | `INFISICAL_DOMAIN` | `https://secrets.ongafaro.com` |
+
+On agent start, `.cursor/environment.json` logs in and sets `INFISICAL_TOKEN`.
+Credentials in Cursor do not expire; tokens refresh each run.
 
 Ensure cloud agents can reach `secrets.ongafaro.com` (public HTTPS or allowlist).
 
