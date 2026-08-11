@@ -42,5 +42,36 @@ that would catch a regression.
   account configuration.
 - Run `bash -n install.sh` and `git diff --check` before committing.
 
+## Cursor Cloud specific instructions
+
+This workspace is a multi-repo Hello Gafaro development environment. Work inside
+the product repository you are changing unless the task explicitly spans repos.
+
+### Secrets
+
+Project secrets live in Infisical, not in Cursor dashboard entries or committed
+`.env` files. The cloud environment provides `INFISICAL_TOKEN`.
+
+Inside a product repository:
+
+```bash
+infisical run -- pnpm install
+infisical run -- pnpm dev
+infisical run -- pnpm test
+```
+
+If Infisical is not initialized in a repo yet, say so instead of inventing
+credentials. Do not print secret values.
+
+### Dependencies
+
+Run install commands inside the relevant repository. Do not assume dependencies
+are preinstalled across the whole workspace unless you verified it in this run.
+
+### Shared bootstrap
+
+`hellogafaro-cursor-environment/install.sh` installs RTK, Infisical CLI, and
+shared skills. Product-specific tooling belongs in that product's repository.
+
 The Ponytail ladder is adapted from the MIT-licensed Ponytail project by
 Dietrich Gebert and the Travel Counsellors Ponytail Cursor plugin.

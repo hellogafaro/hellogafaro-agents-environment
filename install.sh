@@ -73,19 +73,40 @@ install_rtk() {
   rtk init --global --agent cursor --auto-patch
 }
 
+install_infisical() {
+  if command -v infisical >/dev/null 2>&1; then
+    return 0
+  fi
+
+  require_command sudo
+
+  curl -1sLf 'https://artifacts-cli.infisical.com/setup.deb.sh' | sudo -E bash
+  sudo apt-get update -qq
+  sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq infisical
+}
+
 install_skills() {
   if ! gh skill install --help >/dev/null 2>&1; then
-    printf 'GitHub CLI 2.95 or newer with gh skill support is required.\n' >&2
-    exit 1
+    printf 'Warning: GitHub CLI 2.95 or newer with gh skill support is required.\n' >&2
+    return 0
   fi
 
   local skill
+  local failed=0
+
   for skill in "${SHARED_SKILLS[@]}"; do
-    gh skill install "${SKILLS_REPOSITORY}" "skills/${skill}" \
+    if ! gh skill install "${SKILLS_REPOSITORY}" "skills/${skill}" \
       --agent cursor \
       --scope user \
-      --force
+      --force; then
+      printf 'Warning: failed to install skill %s from %s\n' "${skill}" "${SKILLS_REPOSITORY}" >&2
+      failed=1
+    fi
   done
+
+  if (( failed )); then
+    printf 'Warning: one or more shared skills failed to install. Grant the Cursor Cloud Agent GitHub App access to %s, then rebuild.\n' "${SKILLS_REPOSITORY}" >&2
+  fi
 }
 
 main() {
@@ -99,6 +120,7 @@ main() {
   require_command uname
 
   install_rtk
+  install_infisical
   install_skills
 
   printf 'Hello Gafaro Cursor environment is ready.\n'
