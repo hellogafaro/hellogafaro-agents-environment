@@ -69,4 +69,11 @@ for security, irreversible ops, or ambiguity. Commits/docs stay normal prose.
 
 ## Project
 
-<!-- Per-repo: stack, layout, commands, env, constraints -->
+<!--
+  Fill per repo. Keep short.
+  - Stack: languages, frameworks, data stores
+  - Layout: where code, tests, config live
+  - Commands: install, dev, test, build, lint, deploy
+  - Env: how secrets load; required vars (names only)
+  - Constraints: things not to touch, known gotchas
+-->
