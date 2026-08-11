@@ -125,10 +125,15 @@ install_t3() {
 replace_symlink() {
   local source="$1"
   local target="$2"
+  local backup="${target}.pre-agents-environment"
 
   if [[ -e "${target}" && ! -L "${target}" ]]; then
-    printf 'Refusing to replace existing path: %s\n' "${target}" >&2
-    exit 1
+    if [[ ! -e "${backup}" ]]; then
+      mv "${target}" "${backup}"
+      printf 'Preserved existing path as: %s\n' "${backup}"
+    else
+      rm -f "${target}"
+    fi
   fi
 
   ln -sfn "${source}" "${target}"
@@ -227,12 +232,12 @@ install_environment() {
   require_command uname
 
   install_git_tools
-  install_rtk
   install_infisical
   install_bun
   install_python
   install_t3
   install_agent_instructions
+  install_rtk
   install_environment_skills
   install_cli
   install_skills
