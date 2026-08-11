@@ -1,7 +1,6 @@
 # Agents environment
 
-Persistent T3 Code server with shared cross-project instructions, skills, RTK,
-and Infisical.
+Persistent T3 Code server with shared cross-project instructions, skills, and RTK.
 
 ## Install
 
@@ -21,7 +20,6 @@ The installer is idempotent and installs or updates:
 - Python with pip and `venv`
 - Git and GitHub CLI
 - RTK for Claude Code and Codex
-- Infisical CLI
 - shared skills in `~/.agents/skills`
 - shared instructions in `~/.agents/AGENTS.md`
 - T3-only `t3-uploads` and `t3-routines` skills
@@ -55,8 +53,8 @@ agents-environment update
 ```
 
 The command fetches the latest environment repository and runs the same installer.
-It updates T3 Code, RTK, Infisical when needed, shared instructions, shared skills,
-and itself without modifying project repositories.
+It updates T3 Code, RTK, shared instructions, shared skills, and itself without
+modifying project repositories.
 
 Normal server restarts use the persisted installation and do not require network
 access. A newly deployed image reruns installation once when its bundled
@@ -85,8 +83,6 @@ The environment is displayed as `T3 Code Server` by default. Set
 `T3_SERVER_NAME` to give each server a distinct name, such as `Personal` or
 `Production`.
 
-Configure Infisical with `INFISICAL_DOMAIN`, `INFISICAL_CLIENT_ID`, and
-`INFISICAL_CLIENT_SECRET`. Run project commands with `infisical run -- <command>`.
 Provider authentication is managed through T3 Code and the provider CLIs.
 
 Keep application dependencies in each project's package or lock files. The

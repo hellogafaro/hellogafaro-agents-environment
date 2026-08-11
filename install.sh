@@ -76,18 +76,6 @@ install_rtk() {
   rtk init --global --codex
 }
 
-install_infisical() {
-  if command -v infisical >/dev/null 2>&1; then
-    return 0
-  fi
-
-  require_command sudo
-
-  curl -1sLf 'https://artifacts-cli.infisical.com/setup.deb.sh' | sudo -E bash
-  sudo apt-get update -qq
-  sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq infisical
-}
-
 install_git_tools() {
   if command -v git >/dev/null 2>&1 && command -v gh >/dev/null 2>&1; then
     return 0
@@ -239,7 +227,6 @@ install_environment() {
   require_command uname
 
   install_git_tools
-  install_infisical
   install_bun
   install_python
   install_agent_clis
