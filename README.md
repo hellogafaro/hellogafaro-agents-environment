@@ -68,8 +68,8 @@ infisical secrets set --file=.env --env=dev
 
 ### 3. Install script
 
-Either commit `.cursor/environment.json` (preferred) or paste this into the
-environment install field:
+`.cursor/environment.json` on `main` runs `bash install.sh` on every Build.
+Re-point the environment to this repo, or paste into the install field if needed:
 
 ```bash
 gh api repos/hellogafaro/hellogafaro-cursor-environment/contents/install.sh \
@@ -101,9 +101,15 @@ No other secrets belong in this repository.
 
 ## Agent instructions
 
-`AGENTS.md` is the canonical shared agent instruction set. Copy it into a Cursor
-Team Rule to apply across all projects, or add a short repo-specific section in
-each product repository for stack commands.
+`AGENTS.md` holds shared principles — vendor- and framework-agnostic. Copy it into
+a Cursor Team Rule for every project.
+
+Per repo: copy `AGENTS.md` and fill the `## Project` section (stack, layout,
+commands, env, constraints). Project overrides generic rules when they conflict.
+
+Secrets provider and CLI commands in this README are the current default, not
+locked in `AGENTS.md`. Swap providers in README, `install.sh`, dashboard token,
+and each repo's Project env block.
 
 ## Updating
 
