@@ -40,10 +40,11 @@ wait until an agent actually needs them.
 
 ### 2. Secrets (Infisical Universal Auth)
 
-Do not copy project `.env` files into Cursor Secrets.
+Self-hosted at **https://secrets.ongafaro.com** (set in `.cursor/environment.json`
+`start` script). Do not copy project `.env` files into Cursor Secrets.
 
-1. In [Infisical](https://app.infisical.com): **Organization Settings → Access
-   Control → Machine Identities → Create identity** (Universal Auth is default).
+1. In Infisical: **Organization Settings → Access Control → Machine Identities →
+   Create identity** (Universal Auth is default).
 2. **Create Client Secret** with **TTL `0`** (never expires). Copy Client ID and
    Client Secret — secret shown once.
 3. Add the identity to each product project with **read** access on secrets.
@@ -54,11 +55,15 @@ Do not copy project `.env` files into Cursor Secrets.
    | `INFISICAL_CLIENT_ID` | machine identity client id |
    | `INFISICAL_CLIENT_SECRET` | machine identity client secret |
 
-On agent start, `.cursor/environment.json` exchanges those for a short-lived
-`INFISICAL_TOKEN`. Credentials in Cursor do not expire; tokens refresh each run.
+On agent start, `.cursor/environment.json` logs in to `secrets.ongafaro.com` and
+sets `INFISICAL_TOKEN`. Credentials in Cursor do not expire; tokens refresh each
+run.
+
+Ensure cloud agents can reach `secrets.ongafaro.com` (public HTTPS or allowlist).
 
 Each product repository keeps its own Infisical project and `.infisical.json`.
-Agents run commands inside that repo:
+Set `"domain": "https://secrets.ongafaro.com"` in `.infisical.json` for local CLI
+too. Agents run commands inside that repo:
 
 ```bash
 infisical run -- pnpm install
@@ -69,13 +74,11 @@ infisical run -- pnpm test
 Manage secrets locally during iteration:
 
 ```bash
+export INFISICAL_DOMAIN="https://secrets.ongafaro.com"
 infisical login
 infisical secrets set KEY=value --env=dev
 infisical secrets set --file=.env --env=dev
 ```
-
-If you use Infisical EU or self-hosted, also set `INFISICAL_DOMAIN` in Cursor
-secrets.
 
 ### 3. Install script
 
