@@ -122,11 +122,13 @@ No other secrets belong in this repository.
 
 ## Agent instructions
 
-`AGENTS.md` holds shared principles — vendor- and framework-agnostic. Copy it into
-a Cursor Team Rule for every project.
+`AGENTS.md` holds shared principles — vendor- and framework-agnostic, with no
+`## Project` section. Apply it to every project by pasting it into a Cursor Team
+Rule. Cloud agents only inject a repo-root `AGENTS.md`, so a global file on disk is
+not a substitute.
 
-Per repo: copy `AGENTS.md` and fill the `## Project` section (stack, layout,
-commands, env, constraints). Project overrides generic rules when they conflict.
+Per repo: add an `AGENTS.md` at the repo root with a `## Project` section (stack,
+layout, commands, env, constraints). Project specifics override these shared rules.
 
 Secrets provider and CLI commands in this README are the current default, not
 locked in `AGENTS.md`. Swap providers in README, `install.sh`, dashboard secrets,
