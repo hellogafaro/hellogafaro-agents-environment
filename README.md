@@ -1,59 +1,61 @@
 # Agents environment
 
-Shared, cross-project setup for Cursor agents.
+Persistent T3 Code server with shared cross-project instructions, skills, RTK,
+and Infisical.
 
-## Set up
+## Install
 
-Use this repository as the Cursor environment repository. Its
-`.cursor/environment.json` defines the Build and start commands.
+Run:
 
-If the environment uses another repository, give this repository to the agent
-setting it up and apply the same configuration manually:
+```bash
+bash install.sh install
+```
 
-1. Run `bash install.sh install` during Build.
-2. On start, authenticate Infisical and export the token:
+The installer is idempotent and installs or updates:
 
-   ```bash
-   export INFISICAL_TOKEN="$(infisical login \
-     --method=universal-auth \
-     --client-id="$INFISICAL_CLIENT_ID" \
-     --client-secret="$INFISICAL_CLIENT_SECRET" \
-     --silent \
-     --plain)"
-   ```
-
-3. Configure `INFISICAL_CLIENT_ID` and `INFISICAL_CLIENT_SECRET` as secrets.
-4. Configure `INFISICAL_DOMAIN` for the Infisical instance.
-5. Configure `SHARED_SKILLS_REPOSITORY` as the `owner/repository` containing the
-   shared skills. If it is private, grant the Cursor GitHub App read access and
-   add it to `repositoryDependencies`.
-
-The installer is idempotent and installs:
-
-- RTK with global Cursor integration
+- T3 Code
+- RTK for Claude Code and Codex
 - Infisical CLI
-- `AGENTS.md` as an always-applied, VM-wide local Cursor plugin rule
-- the shared `brainstorm`, `deep-research`, `documentation-creation`,
-  `git-operations`, `handoff`, `skills-management`, and `summarize` skills
-- the `agents-environment` management command in `~/.local/bin`
+- shared skills in `~/.agents/skills`
+- shared instructions in `~/.agents/AGENTS.md`
+- the `agents-environment` management command
 
-Project repositories keep their own project-specific instructions and skills.
-The shared instructions are installed once for the whole VM, so `AGENTS.md` does
-not need to be copied into each repository.
+It creates these provider-compatible links:
+
+```text
+~/.codex/AGENTS.md   -> ~/.agents/AGENTS.md
+~/.claude/CLAUDE.md  -> ~/.agents/AGENTS.md
+~/.claude/skills     -> ~/.agents/skills
+```
+
+Project repositories may add their own project-specific instructions and skills.
+
+Set `SHARED_SKILLS_REPOSITORY` to the `owner/repository` containing the shared
+skills. Set `AGENTS_ENVIRONMENT_REPOSITORY` to this repository's Git URL when the
+installer cannot discover it from the current checkout.
 
 ## Update
 
-Run `agents-environment update`. It fetches the latest environment repository
-into a temporary checkout and reruns the idempotent installer. This updates the
-global instructions, shared skills, tools, and the updater without changing any
-project repository.
+Run:
 
-Both setup and updates use the same `agents-environment` command and installation
-path. `install.sh` is only the initial repository bootstrap.
+```bash
+agents-environment update
+```
 
-The installer discovers its Git remote automatically. Set
-`AGENTS_ENVIRONMENT_REPOSITORY` to override it or when installing outside a Git
-checkout.
+The command fetches the latest environment repository and runs the same installer.
+It updates T3 Code, RTK, Infisical when needed, shared instructions, shared skills,
+and itself without modifying project repositories.
 
-Requirements: Linux (`x86_64` or `aarch64`), `curl`, `git`, `sudo`, and GitHub
-CLI 2.95 or newer.
+## Server
+
+Build the included `Dockerfile` and persist `/data`. T3 Code state, provider
+configuration, credentials, shared agent configuration, and workspaces then
+survive container replacements.
+
+The server listens on `127.0.0.1:3773` by default. Override `T3_HOST`, `T3_PORT`,
+or `T3_LOG_LEVEL` when required. Use T3 Connect or a private network rather than
+exposing the server directly.
+
+Configure Infisical with `INFISICAL_DOMAIN`, `INFISICAL_CLIENT_ID`, and
+`INFISICAL_CLIENT_SECRET`. Run project commands with `infisical run -- <command>`.
+Provider authentication is managed through T3 Code and the provider CLIs.

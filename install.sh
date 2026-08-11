@@ -67,11 +67,10 @@ install_rtk() {
     trap - EXIT
   fi
 
-  # rtk always writes its canonical RTK.md into ~/.claude, even for --agent
-  # cursor, and fails if the directory is missing on a fresh machine.
   mkdir -p "${HOME}/.claude"
 
-  rtk init --global --agent cursor --auto-patch
+  rtk init --global --auto-patch
+  rtk init --global --codex --auto-patch
 }
 
 install_infisical() {
@@ -86,34 +85,37 @@ install_infisical() {
   sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq infisical
 }
 
+install_t3() {
+  require_command npm
+  npm install --global --silent --prefix "${HOME}/.local" t3@latest
+}
+
+replace_symlink() {
+  local source="$1"
+  local target="$2"
+
+  if [[ -e "${target}" && ! -L "${target}" ]]; then
+    printf 'Refusing to replace existing path: %s\n' "${target}" >&2
+    exit 1
+  fi
+
+  ln -sfn "${source}" "${target}"
+}
+
 install_agent_instructions() {
   local source_file="${REPOSITORY_DIR}/AGENTS.md"
-  local plugin_dir="${HOME}/.cursor/plugins/local/agents-environment"
+  local agents_dir="${HOME}/.agents"
 
   if [[ ! -f "${source_file}" ]]; then
     printf 'Missing agent instructions: %s\n' "${source_file}" >&2
     exit 1
   fi
 
-  mkdir -p "${plugin_dir}/.cursor-plugin" "${plugin_dir}/rules"
-
-  printf '%s\n' \
-    '{' \
-    '  "name": "agents-environment",' \
-    '  "version": "1.0.0",' \
-    '  "description": "Cross-project agent instructions",' \
-    '  "rules": "./rules"' \
-    '}' >"${plugin_dir}/.cursor-plugin/plugin.json"
-
-  {
-    printf '%s\n' \
-      '---' \
-      'description: Cross-project agent instructions' \
-      'alwaysApply: true' \
-      '---' \
-      ''
-    sed '1{/^# Agent instructions$/d;}' "${source_file}"
-  } >"${plugin_dir}/rules/agents-environment.mdc"
+  mkdir -p "${agents_dir}/skills" "${HOME}/.codex" "${HOME}/.claude"
+  install -m 0644 "${source_file}" "${agents_dir}/AGENTS.md"
+  replace_symlink "${agents_dir}/AGENTS.md" "${HOME}/.codex/AGENTS.md"
+  replace_symlink "${agents_dir}/AGENTS.md" "${HOME}/.claude/CLAUDE.md"
+  replace_symlink "${agents_dir}/skills" "${HOME}/.claude/skills"
 }
 
 install_cli() {
@@ -151,7 +153,7 @@ install_skills() {
 
   for skill in "${SHARED_SKILLS[@]}"; do
     if ! gh skill install "${SKILLS_REPOSITORY}" "skills/${skill}" \
-      --agent cursor \
+      --agent codex \
       --scope user \
       --force; then
       printf 'Warning: failed to install skill %s from %s\n' "${skill}" "${SKILLS_REPOSITORY}" >&2
@@ -160,7 +162,7 @@ install_skills() {
   done
 
   if (( failed )); then
-    printf 'Warning: one or more shared skills failed to install. Grant the Cursor Cloud Agent GitHub App access to %s, then rebuild.\n' "${SKILLS_REPOSITORY}" >&2
+    printf 'Warning: one or more shared skills failed to install. Check GitHub access to %s, then rerun the installer.\n' "${SKILLS_REPOSITORY}" >&2
   fi
 }
 
@@ -169,6 +171,7 @@ install_environment() {
   require_command gh
   require_command awk
   require_command install
+  require_command ln
   require_command mktemp
   require_command sha256sum
   require_command tar
@@ -176,11 +179,12 @@ install_environment() {
 
   install_rtk
   install_infisical
+  install_t3
   install_agent_instructions
   install_cli
   install_skills
 
-  printf 'Cursor environment is ready.\n'
+  printf 'Agents environment is ready.\n'
 }
 
 update_environment() {
