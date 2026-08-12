@@ -1,97 +1,121 @@
-# Agent environment
+# Cursor repository environment
 
-One shared Cursor Cloud development environment for Hello Gafaro repositories.
+Reference for preparing a repository to work reliably with Cursor Cloud Agents.
+This repository is a guideline and tested base, not a source of agent rules or
+skills that every project inherits.
 
-## Cursor setup
+## Ownership
 
-Create a named multi-repository environment in Cursor and select this repository
-as its configuration repository. Add the repositories agents should work on.
-Do not copy this repository's `.cursor` files or shared skills into each project.
+Keep configuration with the people and projects that need it:
 
-Use Cursor's default environment for disposable work that needs no custom tools.
-Use this environment when work needs the shared runtimes, skills, secrets, or
-access to multiple repositories.
+- Cursor User Rules: personal behavior that should apply everywhere.
+- Project `AGENTS.md`: architecture, commands, conventions, constraints, and
+  validation shared by every contributor and agent working on that repository.
+- Project skills: domain or platform workflows relevant to that repository.
+- Project manifest and lockfile: provider and framework CLIs.
+- Cursor secrets: credentials. Never commit tokens or generated login state.
 
-## Included tools
+This repository intentionally contains no `AGENTS.md` and installs no skills.
 
-The Cursor image includes:
+## Base environment
+
+The example `.cursor` environment provides a broadly useful Linux image:
 
 - Node.js 24 with npm and Corepack
 - Bun
 - Python 3 with pip and virtual environments
 - uv
-- Git, curl, jq, ripgrep, build tools, and common archive utilities
+- Git, curl, jq, ripgrep, build tools, and archive utilities
 
-Cursor provides browser and computer-use capabilities, so the image does not
-install a second browser.
+Cursor already provides browser and computer-use capabilities. Do not install a
+second browser unless a project's own tests require a specific executable.
 
-Cursor supplies the agent runtime. Project dependencies remain in each project's
-manifests and lockfiles. When the configuration repository itself has a supported
-lockfile, `.cursor/install.sh` installs it.
+The lifecycle is:
 
-Provider and framework CLIs such as Shopify CLI and Cloudflare Wrangler belong in
-the project that uses them. Pin them in that project's manifest and lockfile, then
-run them through a repository script or its package manager (`bunx`, `pnpm exec`,
-or `npx`).
+- `Dockerfile`: stable universal runtimes and operating-system dependencies.
+- `environment.json`: Cursor Cloud lifecycle and optional environment features.
+- `install.sh`: idempotent dependency installation from the project's lockfile.
+- `update.sh`: cached Cursor update hook; calls `install.sh` after each pull.
+- `start.sh`: runtime services that must be alive while the agent works.
 
-## Configuration
+When preparing a repository with this standard, copy and adapt `.cursor` and keep
+the full base image, including Python and Bun. A project may remove or replace it
+later for a concrete reason.
 
-- Cursor User Rules contain universal personal behavior.
-- Each project's `AGENTS.md` contains only portable project instructions.
-- `.cursor/environment.json` defines the Cursor Cloud lifecycle.
-- `.cursor/Dockerfile` defines universal system tools.
-- `.cursor/install.sh` idempotently installs shared skills and configuration-repo dependencies.
-- `.cursor/update.sh` is Cursor's cached update hook and calls `install.sh`.
-- `.cursor/start.sh` starts runtime services after the cached update phase.
+## Prepare a repository
 
-## Environment capabilities
+Ask an agent to inspect the repository before changing it, then:
 
-Cursor's published schema supports the following optional configuration:
+1. Write or improve a project-specific `AGENTS.md` from verified repository
+   facts. Do not copy a universal policy file from this repository.
+2. Keep human setup, stack, and architecture in `README.md`; link deeper docs.
+3. Install project CLIs as development dependencies with the repository's
+   existing package manager and commit the manifest and lockfile.
+4. Install only relevant project skills and commit them under `.agents/skills`.
+   For Claude compatibility, link `.claude/skills` to `../.agents/skills`.
+5. Add this `.cursor` base environment, then extend it only for verified project
+   requirements such as operating-system libraries, services, ports, or terminals.
+6. Put required credentials in Cursor user or environment secrets, then document
+   variable names without values.
+7. Run the repository's smallest complete validation before committing.
 
-- `name` and `user` identify the environment and runtime user.
-- `build` creates a base image from a Dockerfile; `snapshot` selects a saved image.
-- `install` runs after repositories are pulled. Its disk changes are cached, so it
-  must be idempotent and must not start long-running processes.
-- `start` runs after the cached install phase for runtime services.
-- `terminals` starts named long-running commands in tmux and can describe them to
-  the agent.
-- `ports` exposes named container ports.
-- `repositoryDependencies` grants the generated GitHub token access to required
-  repositories; it does not clone them.
-- `agentCanUpdateSnapshot` permits agents to update a snapshot-based environment.
+## Shopify projects
 
-This general environment intentionally defines no ports, terminals, repository
-dependencies, or snapshot. Add those in Cursor's named multi-repository
-environment or in a project-specific configuration only when required. Secrets
-belong in Cursor environment secrets, never in `environment.json`.
+Install `@shopify/cli` in the project, never globally. Use a repository script or
+the package manager (`bunx`, `pnpm exec`, or `npx`) to run it.
 
-The global core skills are accounts operations, brainstorming, deep research,
-documentation creation, Git operations, handoff, skills management, and
-summarization. Their canonical source is
-[`hellogafaro/hellogafaro-skills`](https://github.com/hellogafaro/hellogafaro-skills).
+Use credentials already configured in Cursor secrets. Authentication depends on
+the Shopify workflow; never guess a token type:
 
-Cursor runs the update hook after pulling repositories. Run it manually when you
-want to refresh the global skills in an existing VM:
+- Theme automation supports `SHOPIFY_CLI_THEME_TOKEN`, generated through Theme
+  Access, together with the explicit store configuration.
+- Shopify app development may require interactive Shopify CLI authentication or
+  app-specific credentials. Ask for the missing supported credential instead of
+  treating a theme token as a universal Shopify login.
 
-```bash
-bash .cursor/update.sh
-```
+Do not print credentials, persist login caches in Git, or place secrets in TOML,
+JSON, committed environment files, or command arguments when an environment
+variable is supported.
 
-Dockerfile dependencies are pinned for reproducibility. Update their committed
-versions, review the diff, and refresh the Cursor environment to rebuild the
-snapshot. To maintain the environment, ask an agent to research the current
-stable versions of every tool in `.cursor/Dockerfile`, update the pins, build or
-otherwise validate the image, and commit the result. OS packages update during
-that rebuild. The scripts use public sources, require no GitHub token, and refuse
-to overwrite unrelated global skill paths.
+## Cloudflare projects
 
-## Project documentation
+Install `wrangler` in the project, never globally. Keep its version in the
+project manifest and lockfile. Use `CLOUDFLARE_API_TOKEN` and, when required,
+`CLOUDFLARE_ACCOUNT_ID` from Cursor secrets for non-interactive access. Keep
+non-secret bindings and configuration in the project's Wrangler config.
 
-Keep verified project facts in the project `README.md` or linked documentation:
-technology stack, setup, architecture, commands, services, and folder ownership.
-Keep project `AGENTS.md` files portable and behavioral. Add project-specific
-agent instructions only when an exception cannot be enforced through code,
-configuration, tests, or documentation.
+Install Cloudflare's official skills only in Cloudflare repositories. Current
+Wrangler versions can offer this automatically; use `wrangler --install-skills`
+for a non-interactive installation. The canonical source is
+[`cloudflare/skills`](https://github.com/cloudflare/skills). Commit selected
+skills under `.agents/skills` so teammates and fresh agents receive the same
+workflows; do not install the complete catalog when only a subset is relevant.
 
-Store credentials in Cursor Personal or repository secrets. Never copy login
-caches, tokens, `.env` files, or credentials into this repository.
+## `environment.json` capabilities
+
+Cursor's published schema supports:
+
+- `name` and `user`
+- `build` from a Dockerfile or a saved `snapshot`
+- cached `install` and runtime `start` commands
+- named `terminals` running in tmux
+- exposed `ports`
+- `repositoryDependencies` for generated Git-provider token access; this does
+  not clone those repositories
+- `agentCanUpdateSnapshot` for snapshot-based environments
+
+Keep the configuration minimal. Add ports, terminals, services, repository
+access, or snapshots only when the project uses them. Secrets do not belong in
+`environment.json`.
+
+## Maintenance
+
+When updating this reference or adopting it in another repository, ask an agent
+to research the current stable versions and official platform guidance. Update
+the pinned Dockerfile versions and project dependencies, inspect the diff, test
+the environment, and commit the result. Avoid automatic unreviewed upgrades.
+
+Sources: [Cursor environment schema](https://cursor.com/schemas/environment.schema.json),
+[Cursor Cloud environments](https://cursor.com/changelog/05-13-26),
+[Shopify Theme Access](https://shopify.dev/docs/storefronts/themes/tools/theme-access),
+and [Cloudflare skills](https://github.com/cloudflare/skills).
