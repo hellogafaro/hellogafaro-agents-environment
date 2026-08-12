@@ -8,14 +8,9 @@ RUN apt-get update \
   && apt-get install -y --no-install-recommends \
     build-essential \
     ca-certificates \
-    chromium \
     curl \
     git \
     jq \
-    libgbm1 \
-    libgtk-3-0 \
-    libnss3 \
-    libxss1 \
     python3 \
     python3-pip \
     python3-venv \

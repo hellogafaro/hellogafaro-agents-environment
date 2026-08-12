@@ -9,8 +9,8 @@ as its configuration repository. Add the repositories agents should work on.
 Do not copy this repository's `.cursor` files or shared skills into each project.
 
 Use Cursor's default environment for disposable work that needs no custom tools.
-Use this environment when work needs the shared runtimes, browser, skills,
-secrets, or access to multiple repositories.
+Use this environment when work needs the shared runtimes, skills, secrets, or
+access to multiple repositories.
 
 ## Included tools
 
@@ -21,7 +21,9 @@ The Cursor image includes:
 - Python 3 with pip and virtual environments
 - uv
 - Git, curl, jq, ripgrep, build tools, and common archive utilities
-- Chromium with common browser automation libraries
+
+Cursor provides browser and computer-use capabilities, so the image does not
+install a second browser.
 
 Cursor supplies the agent runtime. Project dependencies remain in each project's
 manifests and lockfiles. When the configuration repository itself has a supported
@@ -74,9 +76,9 @@ Dockerfile dependencies are pinned for reproducibility. Update their committed
 versions, review the diff, and refresh the Cursor environment to rebuild the
 snapshot. To maintain the environment, ask an agent to research the current
 stable versions of every tool in `.cursor/Dockerfile`, update the pins, build or
-otherwise validate the image, and commit the result. OS packages and browser
-libraries update during that rebuild. The scripts use public sources, require no
-GitHub token, and refuse to overwrite unrelated global skill paths.
+otherwise validate the image, and commit the result. OS packages update during
+that rebuild. The scripts use public sources, require no GitHub token, and refuse
+to overwrite unrelated global skill paths.
 
 ## Project documentation
 
