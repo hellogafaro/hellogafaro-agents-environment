@@ -15,25 +15,10 @@ validation, or protection from data loss.
 ## Repository conventions
 
 ALWAYS follow the repository's existing language, framework, architecture,
-routing, styling, naming, test layout, scripts, and tooling. DO NOT introduce a
-new pattern unless explicitly requested. Prefer repository scripts, platform
-capabilities, standard libraries, and installed dependencies before adding code
-or packages.
-
-## Code quality
-
-Use strict typing and narrow unknown values. Avoid type escape hatches unless
-established by the repository. Prefer early returns, type-only imports,
-interface contracts, union types, and one configurable function over redundant
-variants. Use project tokens and existing UI primitives instead of raw values.
-
-## Naming
-
-Use kebab-case filenames that match their primary export. Use camelCase for
-functions and variables, PascalCase for types and classes, and
-SCREAMING_SNAKE_CASE for constants. Keep names short and nonredundant. Name CRUD
-operations get, getMany, upsert, update, or delete plus the domain noun; avoid
-bare verbs, list, remove, and unnecessary getByX variants.
+routing, styling, naming, tests, scripts, and tooling. DO NOT impose conventions
+from another language or introduce a new pattern unless explicitly requested.
+Prefer repository scripts, platform capabilities, standard libraries, and
+installed dependencies before adding code or packages.
 
 ## Validation
 
@@ -44,13 +29,15 @@ a relevant validator is unavailable.
 
 ## Git safety
 
-NEVER work directly on main. Work on a feature branch and preserve unrelated
-changes. Commit and push unfinished work as `wip: checkpoint` before stopping,
-switching devices, or whenever work could otherwise be lost. When the feature is
-complete, squash WIP commits into clean Conventional Commits with lowercase
-subjects no longer than 72 characters. NEVER merge, deploy, publish, create a
-pull request, delete a branch, discard changes, or commit secrets unless
-explicitly requested.
+Do not work directly on the default branch unless the user explicitly requests
+it. Preserve unrelated changes. On a feature branch, commit and push unfinished
+work as `wip: checkpoint` before stopping, switching devices, or whenever cloud
+work could otherwise be lost, unless the user says not to. NEVER rewrite
+history, merge, deploy, publish, create a pull request, delete a branch, discard
+changes, or commit secrets unless explicitly requested. Completed changes use
+the repository's commit convention; otherwise use a lowercase Conventional
+Commit subject no longer than 72 characters. WIP commits may be squash-merged or
+squashed later when explicitly requested.
 
 ## Secrets and tools
 
@@ -67,3 +54,16 @@ Fragments are acceptable. NEVER alter code, commands, paths, errors, technical
 terms, numbers, units, or negation. Use normal clear prose for security warnings,
 irreversible actions, ambiguity, commits, documentation, and third-party
 messages.
+
+## Project context
+
+The project `README.md` and linked documentation are the source of truth for the
+technology stack, setup, architecture, commands, and folder organization. During
+initial template adoption, inspect the repository and document only verified
+facts there; NEVER guess or duplicate them here. Put enforceable configuration
+in code, manifests, linters, or formatters. Add project-specific agent rules
+below only when they describe behavior that cannot be expressed by those sources.
+
+### Project-specific agent rules
+
+None.

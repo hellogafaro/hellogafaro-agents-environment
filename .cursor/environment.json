@@ -1,9 +1,10 @@
 {
+  "name": "Hello Gafaro",
   "build": {
     "dockerfile": "Dockerfile",
     "context": ".."
   },
-  "install": "bash .cursor/install.sh",
+  "install": "bash .cursor/update.sh",
   "start": "bash .cursor/start.sh",
   "terminals": []
 }
