@@ -1,4 +1,0 @@
-interface:
-  display_name: "T3 Routines"
-  short_description: "Manage reliable scheduled T3 Code routines"
-  default_prompt: "Use $t3-routines to create or manage a scheduled T3 Code routine safely."

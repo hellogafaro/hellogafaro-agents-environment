@@ -1,68 +1,69 @@
 # Agent instructions
 
-Work in the repo you are changing unless the task spans repos.
+Work in the repository being changed unless the task spans repositories.
 
-## Principles
+## Minimal implementation
 
-Less is more. DRY, YAGNI, Kaizen. No duplication, bloat, or speculative abstractions.
+ALWAYS understand the task and trace the affected flow before editing. Then stop
+at the first solution that works: skip unnecessary work, reuse existing code,
+use the standard library, use the platform, use an installed dependency, use one
+line, or only then write the minimum code. Fix root causes, not symptoms. Prefer
+deletion, boring code, few files, and no speculative abstractions, dependencies,
+or boilerplate. NEVER trade away security, accessibility, trust-boundary
+validation, or protection from data loss.
 
-Smallest correct change: skip work → reuse code → stdlib → platform → installed dep
-→ one line → minimum new code. Read first. Fix root cause. Fewest files. Delete
-before adding. Keep trust boundaries, security, accessibility, smallest regression
-check.
+## Repository conventions
 
-## Cloud
+ALWAYS follow the repository's existing language, framework, architecture,
+routing, styling, naming, test layout, scripts, and tooling. DO NOT introduce a
+new pattern unless explicitly requested. Prefer repository scripts, platform
+capabilities, standard libraries, and installed dependencies before adding code
+or packages.
 
-Secrets in team secrets manager — not dashboard or committed env files. Run install,
-dev, test via repo secret wrapper. Never print secrets. Not configured → say so.
+## Code quality
 
-## Shell
-
-Use repo output-compaction wrapper when available. Scope output: `--json`, `--jq`,
-`-l`, `--max-count`, `--glob`, `--quiet`. Repo scripts first. Prefer structured
-search, fast file finder, host CLI/API over scraping. Missing tool → fall back.
-Missing validator → say so.
+Use strict typing and narrow unknown values. Avoid type escape hatches unless
+established by the repository. Prefer early returns, type-only imports,
+interface contracts, union types, and one configurable function over redundant
+variants. Use project tokens and existing UI primitives instead of raw values.
 
 ## Naming
 
-**Files:** `kebab-case`; name matches export; one domain per file.
+Use kebab-case filenames that match their primary export. Use camelCase for
+functions and variables, PascalCase for types and classes, and
+SCREAMING_SNAKE_CASE for constants. Keep names short and nonredundant. Name CRUD
+operations get, getMany, upsert, update, or delete plus the domain noun; avoid
+bare verbs, list, remove, and unnecessary getByX variants.
 
-**Vars:** `camelCase` fns; `PascalCase` types/classes; `SCREAMING_SNAKE_CASE`
-constants. Short names; no redundant suffix (`phone` not `phoneNumber`). `row` /
-plural for collections.
+## Validation
 
-**CRUD:** `get`/`getMany`, `upsert`, `update`, `delete` + domain noun. No bare
-verbs, `list`, or `remove`. One `get`/`update` per domain with optional fields
-beats `getByX`.
+ALWAYS run the smallest relevant validation after changing code. Use the
+repository's lint, typecheck, tests, build, and `git diff --check` where
+applicable. NEVER claim validation passed unless it ran successfully. State when
+a relevant validator is unavailable.
 
-**Other:** `handle`, `format`, `on`, `has`/`is`.
+## Git safety
 
-## Code
+NEVER work directly on main. Work on a feature branch and preserve unrelated
+changes. Commit and push unfinished work as `wip: checkpoint` before stopping,
+switching devices, or whenever work could otherwise be lost. When the feature is
+complete, squash WIP commits into clean Conventional Commits with lowercase
+subjects no longer than 72 characters. NEVER merge, deploy, publish, create a
+pull request, delete a branch, discard changes, or commit secrets unless
+explicitly requested.
 
-Match repo language, framework, routing, styling. No new patterns unless asked.
+## Secrets and tools
 
-Strict typing; no escape hatches unless repo allows. Type-only imports.
-`interface` contracts; `type` unions. Narrow unknown. Early returns. One fn with
-options beats many variants.
+NEVER print, expose, or commit secrets. Use configured secret management and
+repository wrappers when available. Prefer repository scripts, structured
+output, fast search, and official CLIs or APIs over scraping. Fall back cleanly
+when preferred tooling is unavailable.
 
-UI: repo route/file conventions; generated primitives via repo CLI; project
-tokens not raw values.
+## Communication
 
-Imports: external → local → type-only. Doc comments on exports only, one sentence.
-
-## Quality and git
-
-Handoff green: lint, typecheck, tests, build. `git diff --check` before commit.
-Follow repo test layout.
-
-Commits: `type: short description`, lowercase, ≤72 chars. Branches: `feat/slug`,
-`fix/slug`, `chore/slug`. PR: same title; 3–5 one-line bullets.
-
-## Voice
-
-Min tokens. Full accuracy. Drop filler, hedging, pleasantries, tool narration,
-decorative prose, long logs. Keep code, commands, paths, errors, numbers, negation
-exact. No invented shorthand.
-
-Shape: `[problem]. [cause]. [fix].` Fragments OK. Tools fire direct. Expand only
-for security, irreversible ops, or ambiguity. Commits/docs stay normal prose.
+Be terse and exact. Remove filler, hedging, pleasantries, self-reference,
+decorative formatting, routine tool narration, repetition, and long logs.
+Fragments are acceptable. NEVER alter code, commands, paths, errors, technical
+terms, numbers, units, or negation. Use normal clear prose for security warnings,
+irreversible actions, ambiguity, commits, documentation, and third-party
+messages.

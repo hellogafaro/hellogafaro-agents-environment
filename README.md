@@ -1,105 +1,60 @@
-# Agents environment
+# Agent environment
 
-Persistent T3 Code server with shared cross-project instructions, skills, and RTK.
+Portable agent instructions and a general Cursor Cloud development environment.
 
-## Install
+## Use in a project
 
-Run:
+Copy the environment, instructions, and skills into the project, then adapt only
+what the project needs:
 
 ```bash
-bash install.sh install
+cp AGENTS.md /path/to/project/AGENTS.md
+cp -R .cursor /path/to/project/.cursor
+cp -R .agents /path/to/project/.agents
+mkdir -p /path/to/project/.claude
+ln -s ../.agents/skills /path/to/project/.claude/skills
 ```
 
-The installer is idempotent and installs or updates:
+Do not overwrite existing project instructions or Cursor configuration without
+merging them deliberately.
 
-- T3 Code
-- Codex CLI
-- Claude Code CLI
-- Cursor CLI
-- Grok Build CLI
-- OpenCode CLI
-- Node.js with npm
+## Included tools
+
+The Cursor image includes:
+
+- Node.js 24 with npm and Corepack
 - Bun
-- Python with pip and `venv`
-- Git and the latest GitHub CLI from GitHub's official package repository
-- RTK for Claude Code and Codex
-- shared skills in `~/.agents/skills`
-- shared instructions in `~/.agents/AGENTS.md`
-- T3-only `t3-uploads` and `t3-routines` skills
-- the `agents-environment` management command
+- Python 3 with pip and virtual environments
+- uv
+- Git, curl, jq, ripgrep, build tools, and common archive utilities
+- Chromium with common browser automation libraries
 
-It creates these provider-compatible links:
+Cursor supplies the agent runtime. Project dependencies remain in project
+manifests and lockfiles; `.cursor/install.sh` installs them automatically when
+it recognizes a supported lockfile.
 
-```text
-~/.codex/AGENTS.md   -> ~/.agents/AGENTS.md
-~/.claude/CLAUDE.md  -> ~/.agents/AGENTS.md
-~/.claude/skills     -> ~/.agents/skills
-```
+## Configuration
 
-Skills are installed once in `~/.agents/skills`. Codex reads that canonical
-directory directly; Claude discovers it through the link above.
+- `AGENTS.md` is the portable source of truth for agent behavior.
+- `.cursor/environment.json` defines the Cursor Cloud lifecycle.
+- `.cursor/Dockerfile` defines universal system tools.
+- `.cursor/install.sh` installs project dependencies.
+- `.cursor/start.sh` is the place for optional project startup commands.
+- `.agents/skills` contains the portable project skills Cursor and Codex read.
+- `.claude/skills` links to the same skill directory without duplicating it.
 
-Project repositories may add their own project-specific instructions and skills.
+The included core skills are accounts operations, brainstorming, deep research,
+documentation creation, Git operations, handoff, skills management, and
+summarization. They come from
+[`hellogafaro/hellogafaro-skills`](https://github.com/hellogafaro/hellogafaro-skills).
 
-The bundled T3 skills belong to this environment repository, not the shared
-skills repository. `t3-uploads` publishes explicitly requested files through
-tmpfiles.org. `t3-routines` documents the routines CLI and requires its scheduler
-runtime to be installed separately.
-
-The updater and shared-skills repository have working defaults. Override them
-with `AGENTS_ENVIRONMENT_REPOSITORY` and `SHARED_SKILLS_REPOSITORY` when using a
-fork or another skills collection.
-
-## Update
-
-Run:
+Update the installed skills from a development machine with GitHub CLI 2.95 or
+newer:
 
 ```bash
-agents-environment update
+gh skill update --dir .agents/skills --dry-run
+gh skill update --dir .agents/skills --all
 ```
 
-The command fetches the latest environment repository and runs the same installer.
-It updates T3 Code, Codex CLI, Claude Code CLI, Bun, GitHub CLI, shared
-instructions, shared skills, and itself without modifying project repositories.
-
-Normal server restarts use the persisted installation and do not require network
-access. A newly deployed image reruns installation once when its bundled
-configuration changes. Run the update command explicitly to refresh the
-environment without redeploying.
-
-## Server
-
-Build the included `Dockerfile` and persist `/data`. T3 Code state, provider
-configuration, credentials, shared agent configuration, chats, and projects then
-survive container replacements.
-
-T3 Code uses `/data` as its root and the entrypoint creates:
-
-```text
-/data/chats     Quick questions and temporary work
-/data/projects  Projects, whether or not they are Git repositories
-```
-
-The server listens on `0.0.0.0:3773` by default so container relays can reach it.
-It honors `T3_PORT`, then the conventional platform `PORT`, and otherwise uses
-`3773`. Override `T3_HOST` or `T3_LOG_LEVEL` when required. Publish the port only
-through T3 Connect, a private network, or another authenticated relay.
-
-The environment is displayed as `T3 Code Server` by default. Set
-`T3_SERVER_NAME` to give each server a distinct name, such as `Personal` or
-`Production`.
-
-Provider authentication is managed through T3 Code and the provider CLIs.
-
-Authenticate providers on the server, then enable them in T3 Code settings:
-
-```bash
-codex login
-claude auth login
-agent login
-grok login --device-auth
-opencode auth login
-```
-
-Keep application dependencies in each project's package or lock files. The
-global environment intentionally contains runtimes and universal CLI tools only.
+Store credentials in Cursor Personal or repository secrets. Never copy login
+caches, tokens, `.env` files, or credentials into this repository.
