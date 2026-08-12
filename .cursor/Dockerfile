@@ -1,7 +1,6 @@
 FROM node:24.19.0-bookworm
 
 ARG BUN_VERSION=1.3.14
-ARG SHOPIFY_CLI_VERSION=4.6.1
 ARG UV_VERSION=0.12.3
 
 RUN apt-get update \
@@ -47,9 +46,7 @@ RUN set -eux; \
   install -m 0755 "${temp_dir}/${uv_target}/uvx" /usr/local/bin/uvx; \
   rm -rf "${temp_dir}"; \
   corepack enable; \
-  npm install --global "@shopify/cli@${SHOPIFY_CLI_VERSION}"; \
   node --version; \
   bun --version; \
-  shopify version; \
   uv --version; \
   python3 --version

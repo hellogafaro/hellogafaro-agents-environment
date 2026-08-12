@@ -29,6 +29,11 @@ Cursor supplies the agent runtime. Project dependencies remain in each project's
 manifests and lockfiles. When the configuration repository itself has a supported
 lockfile, `.cursor/install.sh` installs it.
 
+Provider and framework CLIs such as Shopify CLI and Cloudflare Wrangler belong in
+the project that uses them. Pin them in that project's manifest and lockfile, then
+run them through a repository script or its package manager (`bunx`, `pnpm exec`,
+or `npx`).
+
 ## Configuration
 
 - Cursor User Rules contain universal personal behavior.
