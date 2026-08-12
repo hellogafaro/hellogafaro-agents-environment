@@ -15,7 +15,8 @@ Keep configuration with the people and projects that need it:
 - Project manifest and lockfile: provider and framework CLIs.
 - Cursor secrets: credentials. Never commit tokens or generated login state.
 
-This repository intentionally contains no `AGENTS.md` and installs no skills.
+This repository intentionally contains no `AGENTS.md` or vendored skills. Its
+guideline installs a small baseline into each prepared project.
 
 ## Base environment
 
@@ -25,6 +26,7 @@ The example `.cursor` environment provides a broadly useful Linux image:
 - Bun
 - Python 3 with pip and virtual environments
 - uv
+- GitHub CLI with Agent Skills support
 - Git, curl, jq, ripgrep, build tools, and archive utilities
 
 Cursor already provides browser and computer-use capabilities. Do not install a
@@ -46,23 +48,60 @@ later for a concrete reason.
 
 Ask an agent to inspect the repository before changing it, then:
 
-1. Write or improve a project-specific `AGENTS.md` from verified repository
+1. Ask the user: “What specific tools, platforms, services, and workflows does
+   this repository need?” Inspect the complete repository and reconcile the
+   answer with its manifests, lockfiles, source, configuration, and docs.
+2. Write or improve a project-specific `AGENTS.md` from verified repository
    facts. Do not copy a universal policy file from this repository.
-2. Keep human setup, stack, and architecture in `README.md`; link deeper docs.
-3. Install project CLIs as development dependencies with the repository's
+3. Keep human setup, stack, and architecture in `README.md`; link deeper docs.
+4. Install project CLIs as development dependencies with the repository's
    existing package manager and commit the manifest and lockfile.
-4. Install only relevant project skills and commit them under `.agents/skills`.
+5. Install the baseline skills below, then add only skills supported by the
+   detected platforms and requested workflows. Commit them under `.agents/skills`.
    For Claude compatibility, link `.claude/skills` to `../.agents/skills`.
-5. Add this `.cursor` base environment, then extend it only for verified project
+6. Add this `.cursor` base environment, then extend it only for verified project
    requirements such as operating-system libraries, services, ports, or terminals.
-6. Put required credentials in Cursor user or environment secrets, then document
+7. Put required credentials in Cursor user or environment secrets, then document
    variable names without values.
-7. Run the repository's smallest complete validation before committing.
+8. Run the repository's smallest complete validation before committing.
+
+## Baseline skills
+
+Install these six skills from
+[`hellogafaro/hellogafaro-skills`](https://github.com/hellogafaro/hellogafaro-skills):
+
+- `brainstorm`
+- `deep-research`
+- `documentation-creation`
+- `handoff`
+- `skills-management`
+- `summarize`
+
+Do not install `accounts-operations` or `git-operations` by default. Install the
+baseline with GitHub CLI from the project root:
+
+```bash
+for skill in brainstorm deep-research documentation-creation handoff skills-management summarize; do
+  gh skill install hellogafaro/hellogafaro-skills "$skill" --dir .agents/skills
+done
+mkdir -p .claude
+ln -s ../.agents/skills .claude/skills
+```
+
+If the symlink or target already exists, inspect and preserve it instead of
+overwriting it. Review installed skill instructions before committing them.
 
 ## Shopify projects
 
 Install `@shopify/cli` in the project, never globally. Use a repository script or
 the package manager (`bunx`, `pnpm exec`, or `npx`) to run it.
+
+Install Shopify's official AI Toolkit for Shopify projects. Prefer Cursor's
+`/add-plugin shopify` when account-level automatic updates are desired. For
+repository-owned collaboration, install only the relevant skills from
+[`Shopify/shopify-ai-toolkit`](https://github.com/Shopify/shopify-ai-toolkit)
+and commit them with the other project skills; do not install every capability
+without checking whether the repository uses it.
 
 Use credentials already configured in Cursor secrets. Authentication depends on
 the Shopify workflow; never guess a token type:
@@ -110,10 +149,24 @@ access, or snapshots only when the project uses them. Secrets do not belong in
 
 ## Maintenance
 
+Before updating skills, inspect the available changes:
+
+```bash
+gh skill list --dir .agents/skills
+gh skill update --dir .agents/skills --dry-run
+gh skill update --dir .agents/skills --all
+```
+
+Review the resulting diff and validation before committing. Skills installed by
+another supported installer, such as Wrangler or Shopify's toolkit installer,
+must be updated with that installer rather than mixed with a second deployment
+method.
+
 When updating this reference or adopting it in another repository, ask an agent
-to research the current stable versions and official platform guidance. Update
-the pinned Dockerfile versions and project dependencies, inspect the diff, test
-the environment, and commit the result. Avoid automatic unreviewed upgrades.
+to research current stable versions, official platform guidance, required CLIs,
+credentials, skills, and system dependencies. Update only what the repository
+needs, inspect the diff, test the environment, and commit the result. Avoid
+automatic unreviewed upgrades.
 
 Sources: [Cursor environment schema](https://cursor.com/schemas/environment.schema.json),
 [Cursor Cloud environments](https://cursor.com/changelog/05-13-26),
